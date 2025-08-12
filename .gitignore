@@ -1,0 +1,145 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+!package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+.env.secret
+.env.production
+.env.staging
+
+# Test results and reports
+test-results/
+test-results-*/
+reports/
+cucumber-reports/
+playwright-report/
+coverage/
+.nyc_output/
+allure-results/
+allure-report/
+performance-reports/
+lighthouse-reports/
+visual-comparisons/
+
+# Playwright specific
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/ms-playwright/
+ms-playwright-*/
+traces/
+videos/
+screenshots/
+storage-states/
+auth/
+.auth/
+
+# Cucumber specific
+.cucumber/
+multiple-cucumber-html-reporter/
+
+# IDE and editors
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Thumbs.db:encryptable
+
+# Build outputs
+dist/
+build/
+out/
+lib/
+*.tsbuildinfo
+
+# Logs
+*.log
+logs/
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Temporary folders
+tmp/
+temp/
+.temp/
+test-tmp/
+playwright-temp/
+
+# Authentication state files
+auth-state.json
+user-session.json
+storage-state.json
+authenticated.json
+
+# Trace files
+trace.zip
+*-trace.zip
+*.trace
+
+# Video recordings
+*.webm
+*.mp4
+
+# Screenshots
+screenshots/
+*.png
+*.jpg
+*.jpeg
+
+# Archive and backup files
+archived-artifacts/
+*.backup
+*.bak
+backup/
+*.zip
+*.tar.gz
+*.rar
+
+# Security sensitive files
+*.pem
+*.key
+*.token
+secrets.json
+credentials.json
+
+# MCP related files (future use)
+.mcp/
+mcp-cache/
+mcp-config.local.json
+mcp-servers/
+
+# Test execution summary
+test-execution-summary.json

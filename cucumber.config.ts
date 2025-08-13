@@ -1,4 +1,4 @@
-import { setDefaultTimeout, AfterAll, BeforeAll, Before, After } from '@cucumber/cucumber';
+import { setDefaultTimeout } from '@cucumber/cucumber';
 
 /**
  * Cucumber Configuration for Playwright Integration

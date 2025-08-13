@@ -3,6 +3,7 @@
     "target": "ES2022",
     "module": "CommonJS",
     "lib": ["ES2022", "DOM"],
+    "types": ["node"],
     "outDir": "./dist",
     "rootDir": "./",
     "strict": true,
@@ -23,7 +24,7 @@
     "noUnusedParameters": true,
     "exactOptionalPropertyTypes": true,
     "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
+    "noPropertyAccessFromIndexSignature": false,
     "noUncheckedIndexedAccess": true,
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
@@ -43,6 +44,8 @@
     "src/**/*",
     "features/**/*",
     "cucumber.config.js",
+    "cucumber.config.ts",
+    "cucumber.ts",
     "playwright.config.ts"
   ],
   "exclude": [

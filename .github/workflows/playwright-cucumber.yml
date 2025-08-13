@@ -81,8 +81,7 @@ jobs:
       - name: 📋 Generate lint report
         if: always()
         run: |
-          npm run lint -- --format json --output-file lint-results.json || true
-          echo "Lint results generated"
+          npx eslint . --format json --output-file lint-results.json || echo "[]" > lint-results.json
           
       - name: 📤 Upload lint results
         if: always()

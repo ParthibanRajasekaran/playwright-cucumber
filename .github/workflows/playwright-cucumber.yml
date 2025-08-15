@@ -207,12 +207,19 @@ jobs:
           path: playwright-report/
           retention-days: 30
           
-      - name: 📊 Publish test results to GitHub
+      - name: � Convert Cucumber JSON to JUnit XML
+        if: always()
+        run: |
+          if [ -f test-results/cucumber-report.json ]; then
+            node scripts/convert-cucumber-to-junit.js test-results/cucumber-report.json test-results/cucumber-report.xml
+          fi
+          
+      - name: �📊 Publish test results to GitHub
         if: always()
         uses: dorny/test-reporter@v1
         with:
           name: Test Results (${{ matrix.os }}-${{ matrix.browser }})
-          path: test-results/*.json
+          path: test-results/*.xml
           reporter: java-junit
           fail-on-error: false
 

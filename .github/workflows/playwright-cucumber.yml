@@ -141,7 +141,7 @@ jobs:
     
     env:
       # Environment configuration
-      BASE_URL: ${{ github.event.inputs.environment == 'production' && 'https://your-prod-app.com' || github.event.inputs.environment == 'staging' && 'https://your-staging-app.com' || 'https://demo.playwright.dev' }}
+      BASE_URL: ${{ github.event.inputs.environment == 'production' && 'https://your-prod-app.com' || github.event.inputs.environment == 'staging' && 'https://your-staging-app.com' || 'https://the-internet.herokuapp.com' }}
       BROWSER: ${{ matrix.browser }}
       HEADED: ${{ github.event.inputs.headless == 'false' && 'true' || 'false' }}
       CI: true
@@ -212,7 +212,7 @@ jobs:
         uses: dorny/test-reporter@v1
         with:
           name: Test Results (${{ matrix.os }}-${{ matrix.browser }})
-          path: cucumber-reports/*.json
+          path: test-results/*.json
           reporter: java-junit
           fail-on-error: false
 
@@ -224,7 +224,7 @@ jobs:
     if: github.event_name == 'pull_request' || contains(github.event.inputs.tags, '@visual')
     
     env:
-      BASE_URL: https://demo.playwright.dev
+      BASE_URL: https://the-internet.herokuapp.com
       BROWSER: chromium
       HEADED: false
       CI: true
@@ -267,7 +267,7 @@ jobs:
     if: github.event_name == 'schedule' || contains(github.event.inputs.tags, '@performance')
     
     env:
-      BASE_URL: https://demo.playwright.dev
+      BASE_URL: https://the-internet.herokuapp.com
       BROWSER: chromium
       HEADED: false
       CI: true
@@ -314,10 +314,10 @@ jobs:
     
     strategy:
       matrix:
-        browser: [chromium, firefox, webkit, edge]
+        browser: [chromium, firefox, webkit]  # Removed edge due to ubuntu runner compatibility
         
     env:
-      BASE_URL: https://demo.playwright.dev
+      BASE_URL: https://the-internet.herokuapp.com
       BROWSER: ${{ matrix.browser }}
       HEADED: false
       CI: true

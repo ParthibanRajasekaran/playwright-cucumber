@@ -26,12 +26,16 @@ Before(async function(this: AuthWorld) {
 /**
  * After hook - runs after each scenario
  */
-After(async function(this: AuthWorld, scenario) {
+After({ timeout: 15000 }, async function(this: AuthWorld, scenario) {
   if (scenario.result?.status === 'FAILED') {
     console.log(`❌ Scenario failed: ${this.scenarioName || 'Unknown scenario'}`);
-    // Take screenshot on failure
-    const screenshotPath = await this.takeScreenshot(`failed-${this.scenarioName?.replace(/\s+/g, '-') || 'unknown'}`);
-    console.log(`📸 Screenshot saved: ${screenshotPath}`);
+    // Take screenshot on failure (skip in CI for speed)
+    if (!process.env.CI) {
+      const screenshotPath = await this.takeScreenshot(`failed-${this.scenarioName?.replace(/\s+/g, '-') || 'unknown'}`);
+      console.log(`📸 Screenshot saved: ${screenshotPath}`);
+    } else {
+      console.log(`📸 Screenshot skipped in CI environment`);
+    }
   } else {
     console.log(`✅ Scenario passed: ${this.scenarioName || 'Unknown scenario'}`);
   }

@@ -137,27 +137,67 @@ export class CustomWorld extends World {
    */
   async cleanup(): Promise<void> {
     try {
+      // Set a shorter timeout for cleanup operations in CI
+      const cleanupTimeout = process.env.CI ? 3000 : 10000;
+      
       // Stop tracing and save if enabled
       if (this.config.trace && this.context) {
         const tracePath = `test-results/traces/trace-${Date.now()}.zip`;
-        await this.context.tracing.stop({ path: tracePath });
+        await Promise.race([
+          this.context.tracing.stop({ path: tracePath }),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Tracing stop timeout')), 2000))
+        ]);
         console.log(`📊 Trace saved to: ${tracePath}`);
       }
 
-      // Close page and context
-      if (this.page) {
-        await this.page.close();
-      }
+      // Close page and context with timeout
+      await Promise.race([
+        this.closeResources(),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Cleanup timeout')), cleanupTimeout))
+      ]);
       
-      if (this.context) {
-        await this.context.close();
-      }
-      
-      if (this.browser) {
-        await this.browser.close();
-      }
     } catch (error) {
       console.error('Error during cleanup:', error);
+      // Force close browser if regular cleanup fails
+      try {
+        if (this.browser) {
+          await this.browser.close();
+        }
+      } catch (forceCloseError) {
+        console.error('Force close also failed:', forceCloseError);
+      }
+    }
+  }
+
+  /**
+   * Close browser resources in order
+   */
+  private async closeResources(): Promise<void> {
+    // Close page first
+    if (this.page && !this.page.isClosed()) {
+      try {
+        await this.page.close();
+      } catch (error) {
+        console.warn('Failed to close page:', error instanceof Error ? error.message : String(error));
+      }
+    }
+    
+    // Close context
+    if (this.context) {
+      try {
+        await this.context.close();
+      } catch (error) {
+        console.warn('Failed to close context:', error instanceof Error ? error.message : String(error));
+      }
+    }
+    
+    // Close browser last
+    if (this.browser) {
+      try {
+        await this.browser.close();
+      } catch (error) {
+        console.warn('Failed to close browser:', error instanceof Error ? error.message : String(error));
+      }
     }
   }
 

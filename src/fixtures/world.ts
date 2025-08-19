@@ -43,19 +43,36 @@ export class CustomWorld extends World {
    * Initialize browser and create new context and page
    */
   async init(): Promise<void> {
+    // CI-optimized browser launch options
+    const ciOptimizations = process.env.CI ? {
+      args: [
+        '--no-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-gpu',
+        '--disable-web-security',
+        '--disable-features=VizDisplayCompositor',
+        '--disable-extensions',
+        '--disable-plugins',
+        '--disable-background-timer-throttling',
+        '--disable-renderer-backgrounding'
+      ]
+    } : {};
+
     // Launch browser based on configuration
     switch (this.config.browser.toLowerCase()) {
       case 'firefox':
         this.browser = await firefox.launch({
           headless: this.config.headless,
-          slowMo: this.config.slowMo
+          slowMo: this.config.slowMo,
+          ...ciOptimizations
         });
         break;
       case 'webkit':
       case 'safari':
         this.browser = await webkit.launch({
           headless: this.config.headless,
-          slowMo: this.config.slowMo
+          slowMo: this.config.slowMo,
+          ...ciOptimizations
         });
         break;
       case 'chromium':
@@ -64,38 +81,41 @@ export class CustomWorld extends World {
         this.browser = await chromium.launch({
           headless: this.config.headless,
           slowMo: this.config.slowMo,
-          // Use latest Chrome features
-          channel: 'chrome'
+          // Use latest Chrome features (skip in CI for stability)
+          ...(process.env.CI ? {} : { channel: 'chrome' }),
+          ...ciOptimizations
         });
         break;
     }
 
-    // Create browser context with advanced features
-    this.context = await this.browser.newContext({
+    // Create browser context with advanced features (simplified for CI)
+    const contextOptions = {
       viewport: this.config.viewport,
       baseURL: this.config.baseURL,
+      ignoreHTTPSErrors: true,
+      locale: 'en-US',
       
-      // Video recording configuration
-      ...(this.config.video && {
+      // Disable expensive features in CI
+      ...(process.env.CI ? {} : {
+        timezoneId: 'America/New_York',
+        permissions: ['clipboard-read', 'clipboard-write', 'notifications']
+      }),
+      
+      // Video recording configuration (disabled in CI for performance)
+      ...(this.config.video && !process.env.CI && {
         recordVideo: {
           dir: 'test-results/videos/',
           size: this.config.viewport
         }
       }),
       
-      // Additional context options for latest Playwright features
-      ignoreHTTPSErrors: true,
-      locale: 'en-US',
-      timezoneId: 'America/New_York',
-      
-      // Enable permissions for modern web features
-      permissions: ['clipboard-read', 'clipboard-write', 'notifications'],
-      
       // Storage state support
       ...(process.env['STORAGE_STATE'] && {
         storageState: process.env['STORAGE_STATE']
       })
-    });
+    };
+
+    this.context = await this.browser.newContext(contextOptions);
 
     // Start tracing if enabled
     if (this.config.trace) {
@@ -137,20 +157,20 @@ export class CustomWorld extends World {
    */
   async cleanup(): Promise<void> {
     try {
-      // Set a shorter timeout for cleanup operations in CI
-      const cleanupTimeout = process.env.CI ? 3000 : 10000;
+      // Increase timeout for cleanup operations in CI - browsers are slow to close
+      const cleanupTimeout = process.env.CI ? 8000 : 15000;
       
       // Stop tracing and save if enabled
       if (this.config.trace && this.context) {
         const tracePath = `test-results/traces/trace-${Date.now()}.zip`;
         await Promise.race([
           this.context.tracing.stop({ path: tracePath }),
-          new Promise((_, reject) => setTimeout(() => reject(new Error('Tracing stop timeout')), 2000))
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Tracing stop timeout')), 3000))
         ]);
         console.log(`📊 Trace saved to: ${tracePath}`);
       }
 
-      // Close page and context with timeout
+      // Close page and context with increased timeout
       await Promise.race([
         this.closeResources(),
         new Promise((_, reject) => setTimeout(() => reject(new Error('Cleanup timeout')), cleanupTimeout))

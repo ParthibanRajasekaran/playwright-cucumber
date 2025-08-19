@@ -12,6 +12,13 @@ on:
         required: false
         default: '@smoke'
 
+# Required permissions for test reporter
+permissions:
+  contents: read
+  issues: read
+  checks: write
+  pull-requests: write
+
 env:
   NODE_VERSION: '20'
   BASE_URL: 'https://the-internet.herokuapp.com'

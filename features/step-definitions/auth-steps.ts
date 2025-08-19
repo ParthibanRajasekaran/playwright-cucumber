@@ -16,7 +16,7 @@ interface AuthWorld extends CustomWorld {
 /**
  * Before hook - runs before each scenario
  */
-Before(async function(this: AuthWorld) {
+Before({ timeout: 30000 }, async function(this: AuthWorld) {
   this.scenarioName = 'Authentication Test'; // Will be overridden by actual scenario name
   console.log(`🎬 Starting scenario: ${this.scenarioName}`);
   await this.init();

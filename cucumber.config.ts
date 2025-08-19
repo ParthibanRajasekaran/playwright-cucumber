@@ -36,7 +36,7 @@ const config = {
     },
     
     // Publishing and execution options
-    publishQuiet: true,
+    // Removed publishQuiet as it's deprecated - see https://github.com/cucumber/cucumber-js/blob/main/docs/deprecations.md
     dryRun: false,
     
     // Parallel execution

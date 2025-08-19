@@ -18,7 +18,7 @@ module.exports = {
     formatOptions: {
       snippetInterface: 'async-await'
     },
-    publishQuiet: true,
+    // Removed publishQuiet as it's deprecated - see https://github.com/cucumber/cucumber-js/blob/main/docs/deprecations.md
     dryRun: false,
     parallel: 2,
     retry: 1,

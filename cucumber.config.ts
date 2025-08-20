@@ -65,9 +65,9 @@ const config = {
         height: parseInt(process.env.VIEWPORT_HEIGHT || '720')
       },
       
-      // Recording configuration
-      video: process.env.VIDEO === 'true' || process.env.CI === 'true',
-      trace: process.env.TRACE === 'true' || process.env.CI === 'true',
+      // Recording configuration - enabled by default for better debugging
+      video: process.env.VIDEO !== 'false',
+      trace: process.env.TRACE !== 'false',
       screenshot: process.env.SCREENSHOT !== 'false',
       
       // Test environment

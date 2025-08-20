@@ -34,8 +34,8 @@ export class CustomWorld extends World {
       slowMo: options.parameters?.slowMo || 0,
       baseURL: options.parameters?.baseURL || 'https://demo.playwright.dev',
       viewport: options.parameters?.viewport || { width: 1280, height: 720 },
-      video: options.parameters?.video === true,
-      trace: options.parameters?.trace === true
+      video: options.parameters?.video !== false, // Enable by default unless explicitly disabled
+      trace: options.parameters?.trace !== false  // Enable by default unless explicitly disabled
     };
   }
 
@@ -101,8 +101,8 @@ export class CustomWorld extends World {
         permissions: ['clipboard-read', 'clipboard-write', 'notifications']
       }),
       
-      // Video recording configuration (disabled in CI for performance)
-      ...(this.config.video && !process.env.CI && {
+      // Video recording configuration - now enabled in CI for better debugging
+      ...(this.config.video && {
         recordVideo: {
           dir: 'test-results/videos/',
           size: this.config.viewport

@@ -30,7 +30,7 @@ export default defineConfig({
   reporter: [
     ['html', { 
       outputFolder: 'reports/playwright-html-report',
-      open: process.env['CI'] ? 'never' : 'on-failure'
+      open: 'never' // Always generate, never auto-open in CI
     }],
     ['list', { printSteps: true }],
     ['json', { 
@@ -47,10 +47,10 @@ export default defineConfig({
     baseURL: process.env['BASE_URL'] || 'https://demo.playwright.dev',
     
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: process.env['TRACE'] === 'true' ? 'on' : (process.env['CI'] ? 'retain-on-failure' : 'on-first-retry'),
+    trace: process.env['TRACE'] === 'false' ? 'off' : 'on',
     
     /* Record video on failure */
-    video: process.env['VIDEO'] === 'true' ? 'on' : (process.env['CI'] ? 'retain-on-failure' : 'on-first-retry'),
+    video: process.env['VIDEO'] === 'false' ? 'off' : 'on',
     
     /* Take screenshot on failure */
     screenshot: process.env['SCREENSHOT'] === 'true' ? 'on' : 'only-on-failure',

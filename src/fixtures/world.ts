@@ -25,6 +25,13 @@ export class CustomWorld extends World {
   public pageManager?: PageManager;
   public scenarioName?: string;
 
+  // Authentication-related properties
+  public authenticationAttempts?: number;
+  public lastError?: string;
+  public credentials?: { username: string; password: string };
+  public authenticationStartTime?: number;
+  public dashboardLoadStartTime?: number;
+
   // Test configuration
   public config: {
     browser: string;

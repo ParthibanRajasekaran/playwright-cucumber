@@ -28,14 +28,7 @@ export default defineConfig({
 
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
-    [
-      "html",
-      {
-        outputFolder: "reports/playwright-html-report",
-        open: "never", // Always generate, never auto-open in CI
-        attachmentsBaseURL: process.env["ATTACHMENTS_BASE_URL"], // New in 1.55
-      },
-    ],
+    // Removed HTML reporter as requested
     ["list", { printSteps: true }],
     [
       "json",
@@ -58,13 +51,13 @@ export default defineConfig({
     baseURL: process.env["BASE_URL"] || "https://demo.playwright.dev",
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: process.env["TRACE"] === "false" ? "off" : "on",
+    trace: "retain-on-failure", // Always generate trace on failure
 
     /* Record video on failure */
-    video: process.env["VIDEO"] === "false" ? "off" : "on",
+    video: "retain-on-failure", // Always generate video on failure
 
     /* Take screenshot on failure */
-    screenshot: process.env["SCREENSHOT"] === "true" ? "on" : "only-on-failure",
+    screenshot: "only-on-failure", // Generate screenshot only on failure
 
     /* Global timeout for all actions */
     actionTimeout: 30000,
@@ -187,7 +180,7 @@ export default defineConfig({
   globalTeardown: require.resolve("./src/config/global-teardown.ts"),
 
   /* Output directory for test results */
-  outputDir: "test-results/",
+  outputDir: "reports/test-artifacts/", // Changed to reports directory
 
   /* Expect timeout with latest assertion features */
   expect: {

@@ -2,6 +2,7 @@ import { Given, When, Then, Before, After } from "@cucumber/cucumber";
 import { expect } from "@playwright/test";
 import { CustomWorld } from "../../src/fixtures/world";
 import { getCredentials } from "../../src/utils/test-data";
+import * as fs from 'fs';
 
 // Type assertion for world context
 interface AuthWorld extends CustomWorld {
@@ -11,6 +12,15 @@ interface AuthWorld extends CustomWorld {
   scenarioName?: string;
   authenticationStartTime?: number;
   dashboardLoadStartTime?: number;
+}
+
+/**
+ * Helper function to capture and store errors for reporting
+ */
+function captureError(world: AuthWorld, error: Error, context: string): void {
+  const errorDetails = `[${context}] ${error.name}: ${error.message}\nStack: ${error.stack}`;
+  world.lastError = errorDetails;
+  console.error(errorDetails);
 }
 
 /**
@@ -29,26 +39,49 @@ Before({ timeout: 30000 }, async function (this: AuthWorld, scenario) {
  * After hook - runs after each scenario
  */
 After({ timeout: 15000 }, async function (this: AuthWorld, scenario) {
-  if (scenario.result?.status === "FAILED") {
-    console.log(
-      `❌ Scenario failed: ${this.scenarioName || "Unknown scenario"}`,
-    );
-    // Take screenshot on failure (skip in CI for speed)
-    if (!process.env.CI) {
+  const scenarioName = this.scenarioName || "Unknown scenario";
+  const isFailure = scenario.result?.status === "FAILED";
+  
+  if (isFailure) {
+    console.log(`❌ Scenario failed: ${scenarioName}`);
+    
+    try {
+      // 1. Take screenshot and attach to report (if enabled)
       const screenshotPath = await this.takeScreenshot(
         `failed-${this.scenarioName?.replace(/\s+/g, "-") || "unknown"}`,
       );
-      console.log(`📸 Screenshot saved: ${screenshotPath}`);
-    } else {
-      console.log(`📸 Screenshot skipped in CI environment`);
+      
+      // Attach screenshot to Cucumber report if one was taken
+      if (screenshotPath) {
+        const screenshotBuffer = fs.readFileSync(screenshotPath);
+        await this.attach(screenshotBuffer, 'image/png');
+        await this.attach(`Screenshot saved: ${screenshotPath}`, 'text/plain');
+        console.log(`📸 Screenshot attached to report: ${screenshotPath}`);
+      }
+      
+      // 2. Attach current page info
+      const currentUrl = this.getCurrentUrl();
+      const pageTitle = await this.getPageTitle();
+      const pageInfo = `=== PAGE INFORMATION ===
+URL: ${currentUrl}
+Title: ${pageTitle}
+Timestamp: ${new Date().toISOString()}`;
+      await this.attach(pageInfo, 'text/plain');
+      
+      // 3. Attach error details if available
+      if (this.lastError) {
+        await this.attach(`=== ERROR DETAILS ===\n${this.lastError}`, 'text/plain');
+      }
+      
+    } catch (attachError) {
+      console.error('Failed to attach failure artifacts:', attachError);
     }
   } else {
-    console.log(
-      `✅ Scenario passed: ${this.scenarioName || "Unknown scenario"}`,
-    );
+    console.log(`✅ Scenario passed: ${scenarioName}`);
   }
 
-  await this.cleanup();
+  // Always cleanup (pass failure status for additional attachments)
+  await this.cleanup(isFailure);
 });
 
 // ==================== GIVEN STEPS ====================
@@ -60,20 +93,25 @@ Given(
   "the login page is available",
   { timeout: 60000 },
   async function (this: AuthWorld) {
-    if (!this.page || !this.pageManager) {
-      throw new Error("Page not initialized");
+    try {
+      if (!this.page || !this.pageManager) {
+        throw new Error("Page not initialized");
+      }
+
+      console.log("🔄 Navigating to login page...");
+      await this.pageManager.loginPage.navigateToLoginPage();
+      console.log("⏳ Waiting for page to load...");
+      await this.pageManager.loginPage.waitForPageLoad();
+
+      // Verify login page is accessible
+      console.log("✅ Verifying login form visibility...");
+      const isFormVisible = await this.pageManager.loginPage.isLoginFormVisible();
+      expect(isFormVisible).toBe(true);
+      console.log("✅ Login page is available and accessible");
+    } catch (error) {
+      captureError(this, error as Error, "Login Page Navigation");
+      throw error;
     }
-
-    console.log("🔄 Navigating to login page...");
-    await this.pageManager.loginPage.navigateToLoginPage();
-    console.log("⏳ Waiting for page to load...");
-    await this.pageManager.loginPage.waitForPageLoad();
-
-    // Verify login page is accessible
-    console.log("✅ Verifying login form visibility...");
-    const isFormVisible = await this.pageManager.loginPage.isLoginFormVisible();
-    expect(isFormVisible).toBe(true);
-    console.log("✅ Login page is available and accessible");
   },
 );
 

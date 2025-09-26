@@ -21,10 +21,10 @@ const { generate } = require('multiple-cucumber-html-reporter');
 const config = {
   reportDir: 'reports',
   cucumberJsonDir: 'test-results',
-  playwrightReportDir: 'reports/playwright-html-report',
-  screenshotsDir: 'test-results/screenshots',
-  videosDir: 'test-results/videos',
-  tracesDir: 'test-results/traces',
+  // Playwright HTML report disabled as requested
+  screenshotsDir: 'reports/screenshots',
+  videosDir: 'reports/videos', 
+  tracesDir: 'reports/traces',
   outputDir: 'reports/cucumber-html-report'
 };
 
@@ -298,6 +298,8 @@ function createSummaryReport() {
         .metadata th, .metadata td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #dee2e6; }
         .metadata th { background: #e9ecef; font-weight: bold; }
         .footer { text-align: center; padding: 20px; color: #666; border-top: 1px solid #dee2e6; }
+        .trace-instructions { margin-top: 10px; padding: 10px; background: #e8f4f8; border-radius: 4px; font-size: 0.9em; }
+        .trace-instructions code { background: #f1f1f1; padding: 2px 4px; border-radius: 2px; font-family: 'Courier New', monospace; }
     </style>
 </head>
 <body>
@@ -337,17 +339,27 @@ function createSummaryReport() {
                     <a href="cucumber-html-report/index.html" target="_blank">View Report →</a>
                 </div>
                 <div class="link-card">
-                    <h4>🎭 Playwright HTML Report</h4>
-                    <p>Playwright test execution details and traces</p>
-                    <a href="playwright-html-report/index.html" target="_blank">View Report →</a>
-                </div>
-                <div class="link-card">
                     <h4>📸 Screenshots</h4>
                     <p>Visual evidence of test failures</p>
-                    <a href="../test-results/screenshots/" target="_blank">View Screenshots (${mediaFiles.screenshots.length}) →</a>
+                    <a href="screenshots/" target="_blank">View Screenshots (${mediaFiles.screenshots.length}) →</a>
                 </div>
                 <div class="link-card">
                     <h4>🎥 Videos</h4>
+                    <p>Video recordings of failed test executions</p>
+                    <a href="videos/" target="_blank">View Videos (${mediaFiles.videos.length}) →</a>
+                </div>
+                <div class="link-card">
+                    <h4>📊 Traces</h4>
+                    <p>Interactive trace files for debugging</p>
+                    <a href="traces/" target="_blank">View Traces (${mediaFiles.traces.length}) →</a>
+                    <br><br>
+                    <div class="trace-instructions">
+                        <strong>🔍 How to view traces:</strong><br>
+                        • Method 1: <code>npx playwright show-trace [trace-file.zip]</code><br>
+                        • Method 2: Drag trace file to <a href="https://trace.playwright.dev" target="_blank">trace.playwright.dev</a><br>
+                        • Method 3: Use trace links in Cucumber report attachments
+                    </div>
+                </div>
                     <p>Screen recordings of test execution</p>
                     <a href="../test-results/videos/" target="_blank">View Videos (${mediaFiles.videos.length}) →</a>
                 </div>
@@ -394,6 +406,95 @@ function createSummaryReport() {
 }
 
 /**
+ * Create trace index page for easy access
+ */
+function createTraceIndex() {
+  if (!fs.existsSync(config.tracesDir)) {
+    return;
+  }
+
+  const traceFiles = fs.readdirSync(config.tracesDir)
+    .filter(file => file.endsWith('.zip'))
+    .map(file => ({
+      name: file,
+      path: file,
+      size: fs.statSync(path.join(config.tracesDir, file)).size,
+      modified: fs.statSync(path.join(config.tracesDir, file)).mtime
+    }));
+
+  if (traceFiles.length === 0) {
+    return;
+  }
+
+  const traceIndexHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playwright Traces</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 20px; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .trace-item { background: #f8f9fa; margin: 10px 0; padding: 15px; border-radius: 8px; border-left: 4px solid #007bff; }
+        .trace-name { font-weight: bold; font-size: 1.1em; margin-bottom: 5px; }
+        .trace-info { color: #666; font-size: 0.9em; margin-bottom: 10px; }
+        .trace-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .btn { padding: 8px 16px; border-radius: 4px; text-decoration: none; font-size: 0.9em; font-weight: bold; transition: background-color 0.2s; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn:hover { opacity: 0.9; }
+        .instructions { background: #e8f4f8; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        code { background: #f1f1f1; padding: 2px 4px; border-radius: 2px; font-family: 'Courier New', monospace; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Playwright Trace Files</h1>
+            <p>Interactive debugging traces from failed test executions</p>
+        </div>
+        
+        <div class="instructions">
+            <h3>🔍 How to View Trace Files:</h3>
+            <p><strong>Method 1:</strong> Click "Open with Playwright CLI" below (requires Playwright installed)</p>
+            <p><strong>Method 2:</strong> Download the trace file and drag it to <a href="https://trace.playwright.dev" target="_blank">trace.playwright.dev</a></p>
+            <p><strong>Method 3:</strong> Use command: <code>npx playwright show-trace [filename]</code></p>
+        </div>
+        
+        ${traceFiles.map(trace => `
+        <div class="trace-item">
+            <div class="trace-name">${trace.name}</div>
+            <div class="trace-info">
+                Size: ${(trace.size / 1024).toFixed(1)} KB | 
+                Modified: ${trace.modified.toLocaleString()}
+            </div>
+            <div class="trace-actions">
+                <a href="${trace.path}" download class="btn btn-primary">📥 Download Trace</a>
+                <a href="https://trace.playwright.dev" target="_blank" class="btn btn-secondary">🌐 Open Trace Viewer</a>
+                <button onclick="copyCommand('${trace.path}')" class="btn btn-secondary">📋 Copy CLI Command</button>
+            </div>
+        </div>
+        `).join('')}
+    </div>
+    
+    <script>
+        function copyCommand(filename) {
+            const command = \`npx playwright show-trace traces/\${filename}\`;
+            navigator.clipboard.writeText(command).then(() => {
+                alert('CLI command copied to clipboard!');
+            });
+        }
+    </script>
+</body>
+</html>`;
+
+  const traceIndexPath = path.join(config.tracesDir, 'index.html');
+  fs.writeFileSync(traceIndexPath, traceIndexHtml);
+  console.log(`📊 Trace index created: ${traceIndexPath}`);
+}
+
+/**
  * Main execution function
  */
 async function main() {
@@ -415,12 +516,15 @@ async function main() {
     console.log('📋 Creating summary report...');
     createSummaryReport();
     
+    // Create trace index for easy access
+    console.log('📊 Creating trace index...');
+    createTraceIndex();
+    
     console.log('');
     console.log('✅ Report generation completed successfully!');
     console.log('════════════════════════════════════════');
     console.log(`📊 Main report: ${config.reportDir}/index.html`);
     console.log(`🥒 Cucumber report: ${config.outputDir}/index.html`);
-    console.log(`🎭 Playwright report: ${config.playwrightReportDir}/index.html`);
     console.log('');
     console.log('💡 To serve reports locally:');
     console.log(`   npx http-server ${config.reportDir} -p 8080 -o`);

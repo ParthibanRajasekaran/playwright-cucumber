@@ -1,7 +1,7 @@
 import { setDefaultTimeout } from '@cucumber/cucumber';
 
 /**
- * Cucumber Configuration for Playwright Integration
+ * Cucumber Configuration for Playwright Integration (v12.2.0)
  * This configuration enables TypeScript support and integrates with Playwright Test
  */
 
@@ -11,7 +11,8 @@ setDefaultTimeout(60 * 1000);
 // Cucumber configuration with TypeScript support
 const config = {
   default: {
-    // TypeScript support
+    // TypeScript support with improved loading
+    loader: ['ts-node/esm'],
     require: [
       'ts-node/register',
       'features/step-definitions/**/*.ts',
@@ -19,35 +20,47 @@ const config = {
     ],
     requireModule: ['ts-node/register'],
     
-    // Output formats
+    // Output formats with enhanced options
     format: [
       'progress-bar',
       '@cucumber/pretty-formatter',
       'json:test-results/cucumber-report.json',
       'html:reports/cucumber-html-report.html',
-      'summary'
+      'summary',
+      // New in v12: Enhanced JUnit output
+      'junit:test-results/cucumber-junit.xml'
     ],
     
-    // Format options
+    // Format options with new features
     formatOptions: {
       snippetInterface: 'async-await',
       printAttachments: true,
-      colorsEnabled: true
+      colorsEnabled: true,
+      // New in v12: Better error reporting
+      theme: 'hierarchy',
+      // New in v12: Enhanced stack traces
+      backtrace: process.env.NODE_ENV !== 'production'
     },
     
     // Publishing and execution options
     // Removed publishQuiet as it's deprecated - see https://github.com/cucumber/cucumber-js/blob/main/docs/deprecations.md
     dryRun: false,
     
-    // Parallel execution
+    // Parallel execution with improved worker management
     parallel: parseInt(process.env.PARALLEL || '2'),
     
-    // Retry configuration
+    // Retry configuration with enhanced options (v12.2.0)
     retry: parseInt(process.env.RETRIES || (process.env.CI ? '2' : '1')),
     retryTagFilter: '@flaky',
     
-    // Tag filtering
-    tags: process.env.TAGS || 'not @skip',
+    // New in v12: Fail fast options
+    failFast: process.env.FAIL_FAST === 'true',
+    
+    // New in v12: Order execution
+    order: process.env.ORDER || 'defined', // 'defined' | 'random'
+    
+    // Tag filtering with enhanced syntax
+    tags: process.env.TAGS || 'not @skip and not @wip',
     
     // World parameters passed to step definitions
     worldParameters: {

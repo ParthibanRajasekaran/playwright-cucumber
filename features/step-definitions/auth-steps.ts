@@ -16,8 +16,10 @@ interface AuthWorld extends CustomWorld {
 /**
  * Before hook - runs before each scenario
  */
-Before({ timeout: 30000 }, async function(this: AuthWorld) {
-  this.scenarioName = 'Authentication Test'; // Will be overridden by actual scenario name
+Before({ timeout: 30000 }, async function(this: AuthWorld, scenario) {
+  const scenarioName = scenario.pickle.name || 'Authentication Test';
+  this.scenarioName = scenarioName;
+  this.setScenarioName(scenarioName); // Set for trace/video naming
   console.log(`🎬 Starting scenario: ${this.scenarioName}`);
   await this.init();
   this.authenticationAttempts = 0;

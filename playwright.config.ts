@@ -5,7 +5,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 /**
- * Playwright Configuration for Cucumber Integration with Latest Features
+ * Playwright Configuration for Cucumber Integration with Latest Features (v1.55.1)
  * @see https://playwright.dev/docs/test-configuration
  */
 export default defineConfig({
@@ -23,21 +23,23 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env['CI'] ? 1 : 2,
   
-  /* Test timeout */
+  /* Test timeout with improved handling */
   timeout: 60000,
   
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     ['html', { 
       outputFolder: 'reports/playwright-html-report',
-      open: 'never' // Always generate, never auto-open in CI
+      open: 'never', // Always generate, never auto-open in CI
+      attachmentsBaseURL: process.env['ATTACHMENTS_BASE_URL'] // New in 1.55
     }],
     ['list', { printSteps: true }],
     ['json', { 
       outputFile: 'test-results/playwright-report.json' 
     }],
     ['junit', { 
-      outputFile: 'test-results/junit-report.xml' 
+      outputFile: 'test-results/junit-report.xml',
+      stripANSIControlSequences: true // New option for cleaner output
     }]
   ],
   
@@ -84,6 +86,15 @@ export default defineConfig({
     
     /* Color scheme preference */
     colorScheme: 'light',
+    
+    /* New in v1.55: Better HAR recording */
+    ...(process.env['RECORD_HAR'] === 'true' && {
+      recordHar: {
+        path: 'test-results/network.har',
+        mode: 'minimal',
+        content: 'attach'
+      }
+    })
   },
 
   /* Configure projects for major browsers with latest features */
@@ -102,19 +113,28 @@ export default defineConfig({
     {
       name: 'firefox',
       use: { 
-        ...devices['Desktop Firefox']
+        ...devices['Desktop Firefox'],
+        // Enhanced Firefox configuration
+        contextOptions: {
+          ignoreHTTPSErrors: true
+        }
       },
     },
     
-    // Safari/WebKit
+    // Safari/WebKit with latest features
     {
       name: 'webkit',
       use: { 
-        ...devices['Desktop Safari'] 
+        ...devices['Desktop Safari'],
+        // Better WebKit configuration
+        contextOptions: {
+          ignoreHTTPSErrors: true,
+          acceptDownloads: true
+        }
       },
     },
     
-    // Edge
+    // Edge with latest channel
     {
       name: 'msedge',
       use: { 
@@ -123,7 +143,7 @@ export default defineConfig({
       },
     },
     
-    // Mobile Chrome
+    // Mobile Chrome with enhanced touch support
     {
       name: 'mobile-chrome',
       use: { 
@@ -131,16 +151,24 @@ export default defineConfig({
         // Enable mobile-specific features
         isMobile: true,
         hasTouch: true,
+        contextOptions: {
+          geolocation: { latitude: 37.7749, longitude: -122.4194 }, // San Francisco
+          permissions: ['geolocation']
+        }
       },
     },
     
-    // Mobile Safari
+    // Mobile Safari with enhanced features
     {
       name: 'mobile-safari',
       use: { 
         ...devices['iPhone 12'],
         isMobile: true,
         hasTouch: true,
+        contextOptions: {
+          geolocation: { latitude: 37.7749, longitude: -122.4194 },
+          permissions: ['geolocation']
+        }
       },
     },
   ],

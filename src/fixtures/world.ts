@@ -153,6 +153,13 @@ export class CustomWorld extends World {
   }
 
   /**
+   * Set scenario name for better trace/video naming
+   */
+  setScenarioName(name: string): void {
+    this.scenarioName = name.replace(/[^a-zA-Z0-9-]/g, '-').toLowerCase();
+  }
+
+  /**
    * Clean up browser resources
    */
   async cleanup(): Promise<void> {
@@ -162,12 +169,24 @@ export class CustomWorld extends World {
       
       // Stop tracing and save if enabled
       if (this.config.trace && this.context) {
-        const tracePath = `test-results/traces/trace-${Date.now()}.zip`;
+        const tracePath = `test-results/traces/trace-${this.scenarioName || 'scenario'}-${Date.now()}.zip`;
         await Promise.race([
           this.context.tracing.stop({ path: tracePath }),
           new Promise((_, reject) => setTimeout(() => reject(new Error('Tracing stop timeout')), 3000))
         ]);
         console.log(`📊 Trace saved to: ${tracePath}`);
+      }
+
+      // Save video if enabled and page exists
+      if (this.config.video && this.page && !this.page.isClosed()) {
+        try {
+          const videoPath = await this.page.video()?.path();
+          if (videoPath) {
+            console.log(`🎥 Video saved to: ${videoPath}`);
+          }
+        } catch (error) {
+          console.warn('Video save failed:', error instanceof Error ? error.message : String(error));
+        }
       }
 
       // Close page and context with increased timeout

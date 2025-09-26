@@ -162,7 +162,7 @@ async function setupAuthentication(_config: FullConfig): Promise<void> {
       console.log(
         `   ✓ Authentication successful, state saved to ${storageStatePath}`,
       );
-    } catch (error) {
+    } catch {
       console.log("   ℹ️  Login form not found, skipping authentication setup");
     }
 

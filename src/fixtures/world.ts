@@ -8,7 +8,11 @@ import {
   webkit,
 } from "playwright";
 import { PageManager } from "../pages";
-import { getTestArtifactConfig, printArtifactConfig, TestArtifactConfig } from "../config/artifacts";
+import {
+  getTestArtifactConfig,
+  printArtifactConfig,
+  TestArtifactConfig,
+} from "../config/artifacts";
 
 /**
  * Custom World class for Cucumber tests with Playwright integration
@@ -40,9 +44,9 @@ export class CustomWorld extends World {
 
     // Get artifact configuration from environment variables
     this.artifactConfig = getTestArtifactConfig();
-    
+
     // Print configuration on first initialization
-    if (process.env['SHOW_ARTIFACT_CONFIG'] !== 'false') {
+    if (process.env["SHOW_ARTIFACT_CONFIG"] !== "false") {
       printArtifactConfig(this.artifactConfig);
     }
 
@@ -53,8 +57,8 @@ export class CustomWorld extends World {
       slowMo: options.parameters?.slowMo || 0,
       baseURL: options.parameters?.baseURL || "https://demo.playwright.dev",
       viewport: options.parameters?.viewport || { width: 1280, height: 720 },
-      video: this.artifactConfig.videos && (options.parameters?.video !== false), // Respect artifact config
-      trace: this.artifactConfig.traces && (options.parameters?.trace !== false), // Respect artifact config
+      video: this.artifactConfig.videos && options.parameters?.video !== false, // Respect artifact config
+      trace: this.artifactConfig.traces && options.parameters?.trace !== false, // Respect artifact config
     };
   }
 
@@ -196,11 +200,11 @@ export class CustomWorld extends World {
       // Stop tracing and save if enabled
       if (this.artifactConfig.traces && this.context) {
         // Ensure traces directory exists in reports
-        const traceDir = 'reports/traces';
-        if (!require('fs').existsSync(traceDir)) {
-          require('fs').mkdirSync(traceDir, { recursive: true });
+        const traceDir = "reports/traces";
+        if (!require("fs").existsSync(traceDir)) {
+          require("fs").mkdirSync(traceDir, { recursive: true });
         }
-        
+
         tracePath = `${traceDir}/trace-${this.scenarioName || "scenario"}-${Date.now()}.zip`;
         await Promise.race([
           this.context.tracing.stop({ path: tracePath }),
@@ -208,15 +212,15 @@ export class CustomWorld extends World {
             setTimeout(() => reject(new Error("Tracing stop timeout")), 3000),
           ),
         ]);
-        
+
         // Only keep trace file if scenario failed (or artifacts on success enabled)
         const shouldKeep = scenarioFailed || !this.artifactConfig.onlyOnFailure;
         if (shouldKeep) {
           console.log(`📊 Trace saved to: ${tracePath}`);
         } else {
           // Delete trace file for passing tests to save space
-          if (require('fs').existsSync(tracePath)) {
-            require('fs').unlinkSync(tracePath);
+          if (require("fs").existsSync(tracePath)) {
+            require("fs").unlinkSync(tracePath);
           }
         }
       }
@@ -228,13 +232,14 @@ export class CustomWorld extends World {
           videoPath = await this.page.video()?.path();
           if (videoPath) {
             // Only keep video if scenario failed (or artifacts on success enabled)
-            const shouldKeep = scenarioFailed || !this.artifactConfig.onlyOnFailure;
+            const shouldKeep =
+              scenarioFailed || !this.artifactConfig.onlyOnFailure;
             if (shouldKeep) {
               console.log(`🎥 Video saved to: ${videoPath}`);
             } else {
               // Delete video file for passing tests to save space
-              if (require('fs').existsSync(videoPath)) {
-                require('fs').unlinkSync(videoPath);
+              if (require("fs").existsSync(videoPath)) {
+                require("fs").unlinkSync(videoPath);
               }
             }
           }
@@ -249,29 +254,49 @@ export class CustomWorld extends World {
       // Attach trace and video to Cucumber report on failure
       if (scenarioFailed) {
         try {
-          if (this.artifactConfig.traces && tracePath && require('fs').existsSync(tracePath)) {
+          if (
+            this.artifactConfig.traces &&
+            tracePath &&
+            require("fs").existsSync(tracePath)
+          ) {
             // Attach trace file directly to Cucumber report for viewing
-            const traceBuffer = require('fs').readFileSync(tracePath);
-            await this.attach(traceBuffer, 'application/zip');
-            
+            const traceBuffer = require("fs").readFileSync(tracePath);
+            await this.attach(traceBuffer, "application/zip");
+
             // Also provide a text link for reference
-            const relativeTracePath = tracePath.replace(process.cwd() + '/', '');
-            await this.attach(`Trace viewer: Use Playwright CLI 'npx playwright show-trace ${relativeTracePath}' or drag ${relativeTracePath} to https://trace.playwright.dev`, 'text/plain');
+            const relativeTracePath = tracePath.replace(
+              process.cwd() + "/",
+              "",
+            );
+            await this.attach(
+              `Trace viewer: Use Playwright CLI 'npx playwright show-trace ${relativeTracePath}' or drag ${relativeTracePath} to https://trace.playwright.dev`,
+              "text/plain",
+            );
             console.log(`📊 Trace attached to report: ${tracePath}`);
           }
-          
-          if (this.artifactConfig.videos && videoPath && require('fs').existsSync(videoPath)) {
+
+          if (
+            this.artifactConfig.videos &&
+            videoPath &&
+            require("fs").existsSync(videoPath)
+          ) {
             // Attach video file directly to Cucumber report
-            const videoBuffer = require('fs').readFileSync(videoPath);
-            await this.attach(videoBuffer, 'video/webm');
-            
+            const videoBuffer = require("fs").readFileSync(videoPath);
+            await this.attach(videoBuffer, "video/webm");
+
             // Also provide file path reference
-            const relativeVideoPath = videoPath.replace(process.cwd() + '/', '');
-            await this.attach(`Video recording: ${relativeVideoPath}`, 'text/plain');
+            const relativeVideoPath = videoPath.replace(
+              process.cwd() + "/",
+              "",
+            );
+            await this.attach(
+              `Video recording: ${relativeVideoPath}`,
+              "text/plain",
+            );
             console.log(`🎥 Video attached to report: ${videoPath}`);
           }
         } catch (attachError) {
-          console.warn('Failed to attach media files to report:', attachError);
+          console.warn("Failed to attach media files to report:", attachError);
         }
       }
 
@@ -349,14 +374,14 @@ export class CustomWorld extends World {
     }
 
     if (!this.artifactConfig.screenshots) {
-      console.log('📸 Screenshots disabled - skipping screenshot capture');
-      return '';
+      console.log("📸 Screenshots disabled - skipping screenshot capture");
+      return "";
     }
 
     // Ensure screenshots directory exists in reports
-    const screenshotDir = 'reports/screenshots';
-    if (!require('fs').existsSync(screenshotDir)) {
-      require('fs').mkdirSync(screenshotDir, { recursive: true });
+    const screenshotDir = "reports/screenshots";
+    if (!require("fs").existsSync(screenshotDir)) {
+      require("fs").mkdirSync(screenshotDir, { recursive: true });
     }
 
     const screenshotPath = `${screenshotDir}/${name}-${Date.now()}.png`;

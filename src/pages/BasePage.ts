@@ -71,9 +71,16 @@ import { Page, BrowserContext, Locator } from "@playwright/test";
   /**   * Reload the current page   */ async reload(): Promise<void> {
     await this.page.reload({ waitUntil: "domcontentloaded" });
   }
-  /**   * Execute JavaScript in the page context   * @param script - JavaScript code to execute   * @param args - Arguments to pass to the script   */ async executeScript<
-    T,
-  >(script: string, ...args: any[]): Promise<T> {
+  /**
+   * Execute JavaScript in the page context
+   * @param script - JavaScript code to execute
+   * @param args - Arguments to pass to the script
+   */
+  async executeScript<T>(
+    script: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ...args: any[]
+  ): Promise<T> {
     return await this.page.evaluate(script, ...args);
   }
   /**   * Handle page dialogs   * @param accept - Whether to accept the dialog   * @param promptText - Text to enter in prompt dialogs   */ async handleDialog(

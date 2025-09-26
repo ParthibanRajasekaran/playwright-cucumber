@@ -2,22 +2,12 @@ import { Given, When, Then, Before, After } from "@cucumber/cucumber";
 import { expect } from "@playwright/test";
 import { CustomWorld } from "../../src/fixtures/world";
 import { getCredentials } from "../../src/utils/test-data";
-import * as fs from 'fs';
-
-// Type assertion for world context
-interface AuthWorld extends CustomWorld {
-  authenticationAttempts?: number;
-  lastError?: string;
-  credentials?: { username: string; password: string };
-  scenarioName?: string;
-  authenticationStartTime?: number;
-  dashboardLoadStartTime?: number;
-}
+import * as fs from "fs";
 
 /**
  * Helper function to capture and store errors for reporting
  */
-function captureError(world: AuthWorld, error: Error, context: string): void {
+function captureError(world: CustomWorld, error: Error, context: string): void {
   const errorDetails = `[${context}] ${error.name}: ${error.message}\nStack: ${error.stack}`;
   world.lastError = errorDetails;
   console.error(errorDetails);
@@ -26,7 +16,7 @@ function captureError(world: AuthWorld, error: Error, context: string): void {
 /**
  * Before hook - runs before each scenario
  */
-Before({ timeout: 30000 }, async function (this: AuthWorld, scenario) {
+Before({ timeout: 30000 }, async function (this: CustomWorld, scenario) {
   const scenarioName = scenario.pickle.name || "Authentication Test";
   this.scenarioName = scenarioName;
   this.setScenarioName(scenarioName); // Set for trace/video naming
@@ -38,27 +28,27 @@ Before({ timeout: 30000 }, async function (this: AuthWorld, scenario) {
 /**
  * After hook - runs after each scenario
  */
-After({ timeout: 15000 }, async function (this: AuthWorld, scenario) {
+After({ timeout: 15000 }, async function (this: CustomWorld, scenario) {
   const scenarioName = this.scenarioName || "Unknown scenario";
   const isFailure = scenario.result?.status === "FAILED";
-  
+
   if (isFailure) {
     console.log(`❌ Scenario failed: ${scenarioName}`);
-    
+
     try {
       // 1. Take screenshot and attach to report (if enabled)
       const screenshotPath = await this.takeScreenshot(
         `failed-${this.scenarioName?.replace(/\s+/g, "-") || "unknown"}`,
       );
-      
+
       // Attach screenshot to Cucumber report if one was taken
       if (screenshotPath) {
         const screenshotBuffer = fs.readFileSync(screenshotPath);
-        await this.attach(screenshotBuffer, 'image/png');
-        await this.attach(`Screenshot saved: ${screenshotPath}`, 'text/plain');
+        await this.attach(screenshotBuffer, "image/png");
+        await this.attach(`Screenshot saved: ${screenshotPath}`, "text/plain");
         console.log(`📸 Screenshot attached to report: ${screenshotPath}`);
       }
-      
+
       // 2. Attach current page info
       const currentUrl = this.getCurrentUrl();
       const pageTitle = await this.getPageTitle();
@@ -66,15 +56,17 @@ After({ timeout: 15000 }, async function (this: AuthWorld, scenario) {
 URL: ${currentUrl}
 Title: ${pageTitle}
 Timestamp: ${new Date().toISOString()}`;
-      await this.attach(pageInfo, 'text/plain');
-      
+      await this.attach(pageInfo, "text/plain");
+
       // 3. Attach error details if available
       if (this.lastError) {
-        await this.attach(`=== ERROR DETAILS ===\n${this.lastError}`, 'text/plain');
+        await this.attach(
+          `=== ERROR DETAILS ===\n${this.lastError}`,
+          "text/plain",
+        );
       }
-      
     } catch (attachError) {
-      console.error('Failed to attach failure artifacts:', attachError);
+      console.error("Failed to attach failure artifacts:", attachError);
     }
   } else {
     console.log(`✅ Scenario passed: ${scenarioName}`);
@@ -92,7 +84,7 @@ Timestamp: ${new Date().toISOString()}`;
 Given(
   "the login page is available",
   { timeout: 60000 },
-  async function (this: AuthWorld) {
+  async function (this: CustomWorld) {
     try {
       if (!this.page || !this.pageManager) {
         throw new Error("Page not initialized");
@@ -105,7 +97,8 @@ Given(
 
       // Verify login page is accessible
       console.log("✅ Verifying login form visibility...");
-      const isFormVisible = await this.pageManager.loginPage.isLoginFormVisible();
+      const isFormVisible =
+        await this.pageManager.loginPage.isLoginFormVisible();
       expect(isFormVisible).toBe(true);
       console.log("✅ Login page is available and accessible");
     } catch (error) {
@@ -118,7 +111,7 @@ Given(
 /**
  * Set up valid user credentials
  */
-Given("I have valid user credentials", async function (this: AuthWorld) {
+Given("I have valid user credentials", async function (this: CustomWorld) {
   this.credentials = await getCredentials("valid");
 });
 
@@ -127,7 +120,7 @@ Given("I have valid user credentials", async function (this: AuthWorld) {
  */
 Given(
   "I have {string} credentials",
-  async function (this: AuthWorld, credentialType: string) {
+  async function (this: CustomWorld, credentialType: string) {
     switch (credentialType) {
       case "incorrect username":
         this.credentials = {
@@ -161,7 +154,7 @@ Given(
  */
 Given(
   "I have made multiple failed authentication attempts",
-  async function (this: AuthWorld) {
+  async function (this: CustomWorld) {
     if (!this.page || !this.pageManager) {
       throw new Error("Page not initialized");
     }
@@ -195,7 +188,7 @@ Given(
  */
 Given(
   "I have a password containing special characters",
-  async function (this: AuthWorld) {
+  async function (this: CustomWorld) {
     this.credentials = { username: "testuser", password: "P@ssw0rd!@#$%" };
   },
 );
@@ -203,7 +196,7 @@ Given(
 /**
  * Set up login interface display
  */
-Given("the login interface is displayed", async function (this: AuthWorld) {
+Given("the login interface is displayed", async function (this: CustomWorld) {
   if (!this.page || !this.pageManager) {
     throw new Error("Page not initialized");
   }
@@ -215,7 +208,7 @@ Given("the login interface is displayed", async function (this: AuthWorld) {
 /**
  * Set up mobile device context
  */
-Given("I am using a mobile device", async function (this: AuthWorld) {
+Given("I am using a mobile device", async function (this: CustomWorld) {
   if (!this.page) {
     throw new Error("Page not initialized");
   }
@@ -233,7 +226,7 @@ Given("I am using a mobile device", async function (this: AuthWorld) {
 /**
  * Set up forgotten password scenario
  */
-Given("I have forgotten my password", async function (this: AuthWorld) {
+Given("I have forgotten my password", async function (this: CustomWorld) {
   if (!this.page || !this.pageManager) {
     throw new Error("Page not initialized");
   }
@@ -244,7 +237,7 @@ Given("I have forgotten my password", async function (this: AuthWorld) {
 /**
  * Set up new user scenario
  */
-Given("I am a new user without an account", async function (this: AuthWorld) {
+Given("I am a new user without an account", async function (this: CustomWorld) {
   if (!this.page || !this.pageManager) {
     throw new Error("Page not initialized");
   }
@@ -257,7 +250,7 @@ Given("I am a new user without an account", async function (this: AuthWorld) {
  */
 Given(
   "the authentication system is under normal load",
-  async function (this: AuthWorld) {
+  async function (this: CustomWorld) {
     if (!this.page || !this.pageManager) {
       throw new Error("Page not initialized");
     }
@@ -272,7 +265,7 @@ Given(
  */
 Given(
   "I am authenticated and using the application",
-  async function (this: AuthWorld) {
+  async function (this: CustomWorld) {
     if (!this.page || !this.pageManager) {
       throw new Error("Page not initialized");
     }
@@ -297,7 +290,7 @@ Given(
 /**
  * Authenticate with the application
  */
-When("I authenticate with the application", async function (this: AuthWorld) {
+When("I authenticate with the application", async function (this: CustomWorld) {
   if (!this.page || !this.pageManager || !this.credentials) {
     throw new Error("Page, page manager, or credentials not initialized");
   }
@@ -314,7 +307,7 @@ When("I authenticate with the application", async function (this: AuthWorld) {
  */
 When(
   "I authenticate with {string} enabled",
-  async function (this: AuthWorld, option: string) {
+  async function (this: CustomWorld, option: string) {
     if (!this.page || !this.pageManager || !this.credentials) {
       throw new Error("Page, page manager, or credentials not initialized");
     }
@@ -336,7 +329,7 @@ When(
 /**
  * Attempt authentication
  */
-When("I attempt to authenticate", async function (this: AuthWorld) {
+When("I attempt to authenticate", async function (this: CustomWorld) {
   if (!this.page || !this.pageManager || !this.credentials) {
     throw new Error("Page, page manager, or credentials not initialized");
   }
@@ -357,7 +350,7 @@ When("I attempt to authenticate", async function (this: AuthWorld) {
  */
 When(
   "I exceed the allowed failure threshold",
-  async function (this: AuthWorld) {
+  async function (this: CustomWorld) {
     if (!this.page || !this.pageManager || !this.credentials) {
       throw new Error("Page, page manager, or credentials not initialized");
     }
@@ -374,7 +367,7 @@ When(
 /**
  * Access login interface
  */
-When("I access the login interface", async function (this: AuthWorld) {
+When("I access the login interface", async function (this: CustomWorld) {
   if (!this.page || !this.pageManager) {
     throw new Error("Page or page manager not initialized");
   }
@@ -385,7 +378,7 @@ When("I access the login interface", async function (this: AuthWorld) {
 /**
  * Request password recovery
  */
-When("I request password recovery", async function (this: AuthWorld) {
+When("I request password recovery", async function (this: CustomWorld) {
   if (!this.page || !this.pageManager) {
     throw new Error("Page or page manager not initialized");
   }
@@ -400,7 +393,7 @@ When("I request password recovery", async function (this: AuthWorld) {
 /**
  * Choose to create account
  */
-When("I choose to create an account", async function (this: AuthWorld) {
+When("I choose to create an account", async function (this: CustomWorld) {
   if (!this.page || !this.pageManager) {
     throw new Error("Page or page manager not initialized");
   }
@@ -413,7 +406,7 @@ When("I choose to create an account", async function (this: AuthWorld) {
 /**
  * Submit credentials
  */
-When("I submit my credentials", async function (this: AuthWorld) {
+When("I submit my credentials", async function (this: CustomWorld) {
   if (!this.page || !this.pageManager || !this.credentials) {
     throw new Error("Page, page manager, or credentials not initialized");
   }
@@ -428,21 +421,24 @@ When("I submit my credentials", async function (this: AuthWorld) {
 /**
  * Authenticate with special character credentials
  */
-When("I authenticate with these credentials", async function (this: AuthWorld) {
-  if (!this.page || !this.pageManager || !this.credentials) {
-    throw new Error("Page, page manager, or credentials not initialized");
-  }
+When(
+  "I authenticate with these credentials",
+  async function (this: CustomWorld) {
+    if (!this.page || !this.pageManager || !this.credentials) {
+      throw new Error("Page, page manager, or credentials not initialized");
+    }
 
-  await this.pageManager.loginPage.login(
-    this.credentials.username,
-    this.credentials.password,
-  );
-});
+    await this.pageManager.loginPage.login(
+      this.credentials.username,
+      this.credentials.password,
+    );
+  },
+);
 
 /**
  * Choose to logout
  */
-When("I choose to logout", async function (this: AuthWorld) {
+When("I choose to logout", async function (this: CustomWorld) {
   if (!this.page || !this.pageManager) {
     throw new Error("Page or page manager not initialized");
   }
@@ -457,7 +453,7 @@ When("I choose to logout", async function (this: AuthWorld) {
  */
 Then(
   "I should be granted access to my account",
-  async function (this: AuthWorld) {
+  async function (this: CustomWorld) {
     if (!this.page) {
       throw new Error("Page not initialized");
     }
@@ -475,7 +471,7 @@ Then(
  */
 Then(
   "I should see my personalized dashboard",
-  async function (this: AuthWorld) {
+  async function (this: CustomWorld) {
     if (!this.page || !this.pageManager) {
       throw new Error("Page or page manager not initialized");
     }
@@ -494,7 +490,7 @@ Then(
  */
 Then(
   "my login session should be established",
-  async function (this: AuthWorld) {
+  async function (this: CustomWorld) {
     if (!this.page) {
       throw new Error("Page not initialized");
     }
@@ -510,7 +506,7 @@ Then(
  */
 Then(
   "my login session should persist across browser sessions",
-  async function (this: AuthWorld) {
+  async function (this: CustomWorld) {
     if (!this.page) {
       throw new Error("Page not initialized");
     }
@@ -534,25 +530,28 @@ Then(
 /**
  * Authentication should be rejected
  */
-Then("my authentication should be rejected", async function (this: AuthWorld) {
-  if (!this.page || !this.pageManager) {
-    throw new Error("Page or page manager not initialized");
-  }
+Then(
+  "my authentication should be rejected",
+  async function (this: CustomWorld) {
+    if (!this.page || !this.pageManager) {
+      throw new Error("Page or page manager not initialized");
+    }
 
-  // Should remain on login page
-  const currentUrl = this.page.url();
-  expect(currentUrl).toContain("login");
+    // Should remain on login page
+    const currentUrl = this.page.url();
+    expect(currentUrl).toContain("login");
 
-  // Should not be redirected to secure area
-  expect(currentUrl).not.toContain("secure");
-});
+    // Should not be redirected to secure area
+    expect(currentUrl).not.toContain("secure");
+  },
+);
 
 /**
  * Should see appropriate error message
  */
 Then(
   "I should see an appropriate error message",
-  async function (this: AuthWorld) {
+  async function (this: CustomWorld) {
     if (!this.page || !this.pageManager) {
       throw new Error("Page or page manager not initialized");
     }
@@ -566,7 +565,7 @@ Then(
 /**
  * Should remain unauthenticated
  */
-Then("I should remain unauthenticated", async function (this: AuthWorld) {
+Then("I should remain unauthenticated", async function (this: CustomWorld) {
   if (!this.page) {
     throw new Error("Page not initialized");
   }
@@ -581,7 +580,7 @@ Then("I should remain unauthenticated", async function (this: AuthWorld) {
  */
 Then(
   "my account should be temporarily locked",
-  async function (this: AuthWorld) {
+  async function (this: CustomWorld) {
     if (!this.page || !this.pageManager) {
       throw new Error("Page or page manager not initialized");
     }
@@ -600,7 +599,7 @@ Then(
  */
 Then(
   "further authentication attempts should be blocked",
-  async function (this: AuthWorld) {
+  async function (this: CustomWorld) {
     if (!this.page || !this.pageManager) {
       throw new Error("Page or page manager not initialized");
     }
@@ -619,7 +618,7 @@ Then(
  */
 Then(
   "I should receive appropriate security notifications",
-  async function (this: AuthWorld) {
+  async function (this: CustomWorld) {
     if (!this.page || !this.pageManager) {
       throw new Error("Page or page manager not initialized");
     }
@@ -638,7 +637,7 @@ Then(
  */
 Then(
   "the authentication form should be fully accessible",
-  async function (this: AuthWorld) {
+  async function (this: CustomWorld) {
     if (!this.page || !this.pageManager) {
       throw new Error("Page or page manager not initialized");
     }
@@ -654,7 +653,7 @@ Then(
  */
 Then(
   "all interactive elements should have proper labels",
-  async function (this: AuthWorld) {
+  async function (this: CustomWorld) {
     if (!this.page || !this.pageManager) {
       throw new Error("Page or page manager not initialized");
     }
@@ -671,7 +670,7 @@ Then(
  */
 Then(
   "keyboard navigation should be fully functional",
-  async function (this: AuthWorld) {
+  async function (this: CustomWorld) {
     if (!this.page) {
       throw new Error("Page not initialized");
     }
@@ -700,7 +699,7 @@ Then(
  */
 Then(
   "screen reader compatibility should be maintained",
-  async function (this: AuthWorld) {
+  async function (this: CustomWorld) {
     if (!this.page) {
       throw new Error("Page not initialized");
     }
@@ -727,7 +726,7 @@ Then(
  */
 Then(
   "the interface should adapt to my screen size",
-  async function (this: AuthWorld) {
+  async function (this: CustomWorld) {
     if (!this.page || !this.pageManager) {
       throw new Error("Page or page manager not initialized");
     }
@@ -743,7 +742,7 @@ Then(
  */
 Then(
   "all functionality should remain accessible",
-  async function (this: AuthWorld) {
+  async function (this: CustomWorld) {
     if (!this.page || !this.pageManager) {
       throw new Error("Page or page manager not initialized");
     }
@@ -762,7 +761,7 @@ Then(
  */
 Then(
   "I should be guided through the reset process",
-  async function (this: AuthWorld) {
+  async function (this: CustomWorld) {
     if (!this.page) {
       throw new Error("Page not initialized");
     }
@@ -781,7 +780,7 @@ Then(
  */
 Then(
   "I should receive appropriate recovery instructions",
-  async function (this: AuthWorld) {
+  async function (this: CustomWorld) {
     if (!this.page) {
       throw new Error("Page not initialized");
     }
@@ -800,7 +799,7 @@ Then(
  */
 Then(
   "I should be guided to the registration process",
-  async function (this: AuthWorld) {
+  async function (this: CustomWorld) {
     if (!this.page) {
       throw new Error("Page not initialized");
     }
@@ -822,7 +821,7 @@ Then(
  */
 Then(
   "I should be able to complete my account setup",
-  async function (this: AuthWorld) {
+  async function (this: CustomWorld) {
     if (!this.page) {
       throw new Error("Page not initialized");
     }
@@ -841,7 +840,7 @@ Then(
  */
 Then(
   "authentication should complete promptly",
-  async function (this: AuthWorld) {
+  async function (this: CustomWorld) {
     if (!this.authenticationStartTime) {
       throw new Error("Authentication start time not recorded");
     }
@@ -856,7 +855,7 @@ Then(
  */
 Then(
   "system response time should meet performance standards",
-  async function (this: AuthWorld) {
+  async function (this: CustomWorld) {
     if (!this.authenticationStartTime) {
       throw new Error("Authentication start time not recorded");
     }
@@ -871,7 +870,7 @@ Then(
  */
 Then(
   "the system should handle the authentication correctly",
-  async function (this: AuthWorld) {
+  async function (this: CustomWorld) {
     if (!this.page) {
       throw new Error("Page not initialized");
     }
@@ -893,7 +892,7 @@ Then(
  */
 Then(
   "character encoding should not affect the process",
-  async function (this: AuthWorld) {
+  async function (this: CustomWorld) {
     if (!this.page || !this.pageManager) {
       throw new Error("Page or page manager not initialized");
     }
@@ -912,7 +911,7 @@ Then(
  */
 Then(
   "my session should be completely terminated",
-  async function (this: AuthWorld) {
+  async function (this: CustomWorld) {
     if (!this.page) {
       throw new Error("Page not initialized");
     }
@@ -928,7 +927,7 @@ Then(
  */
 Then(
   "I should be returned to the unauthenticated state",
-  async function (this: AuthWorld) {
+  async function (this: CustomWorld) {
     if (!this.page) {
       throw new Error("Page not initialized");
     }
@@ -944,7 +943,7 @@ Then(
  */
 Then(
   "my session data should be properly cleared",
-  async function (this: AuthWorld) {
+  async function (this: CustomWorld) {
     if (!this.page) {
       throw new Error("Page not initialized");
     }

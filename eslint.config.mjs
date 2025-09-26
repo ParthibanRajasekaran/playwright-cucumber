@@ -48,6 +48,12 @@ export default [
   {
     files: ['features/**/*.ts'],
     languageOptions: {
+      parser: tsparser,
+      parserOptions: {
+        ecmaVersion: 2023,
+        sourceType: 'module',
+        project: './tsconfig.json'
+      },
       globals: {
         console: 'readonly',
         process: 'readonly',
@@ -64,7 +70,12 @@ export default [
         clearInterval: 'readonly'
       }
     },
+    plugins: {
+      '@typescript-eslint': tseslint,
+      prettier: prettier
+    },
     rules: {
+      'prettier/prettier': 'warn',
       '@typescript-eslint/no-unused-vars': 'off',
       'no-undef': 'off',
       'no-console': 'off',

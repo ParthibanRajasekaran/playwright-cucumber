@@ -506,7 +506,7 @@ async function main() {
     ensureDirectories();
     
     // Link media files (for future use)
-    const _mediaFiles = linkMediaFiles(); // Reserved for media attachments
+    linkMediaFiles(); // Reserved for media attachments
     
     // Generate Cucumber HTML report
     console.log('📝 Generating Cucumber HTML report...');

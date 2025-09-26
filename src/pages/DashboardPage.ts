@@ -153,7 +153,7 @@ export class DashboardPage extends BasePage {
       const dashboardVisible = await this.isDashboardVisible();
 
       return urlCheck && dashboardVisible;
-    } catch (error) {
+    } catch {
       return false;
     }
   }

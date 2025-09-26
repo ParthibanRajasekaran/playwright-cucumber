@@ -271,7 +271,7 @@ function generateFinalSummary(): void {
       execSync("pkill -f firefox || true", { stdio: "ignore" });
       execSync("pkill -f webkit || true", { stdio: "ignore" });
       console.log("   ✓ Browser processes cleaned up");
-    } catch (error) {
+    } catch {
       // Ignore errors in cleanup
     }
   }
@@ -296,7 +296,7 @@ function calculateDirectorySize(dirPath: string): number {
         totalSize += stats.size;
       }
     }
-  } catch (error) {
+  } catch {
     // Ignore errors for inaccessible directories
   }
 

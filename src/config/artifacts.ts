@@ -17,25 +17,29 @@ export interface TestArtifactConfig {
 export function getTestArtifactConfig(): TestArtifactConfig {
   const config: TestArtifactConfig = {
     // Screenshot configuration
-    screenshots: process.env['SCREENSHOTS'] !== 'false' && process.env['NO_SCREENSHOTS'] !== 'true',
-    
-    // Video configuration  
-    videos: process.env['VIDEOS'] !== 'false' && process.env['NO_VIDEOS'] !== 'true',
-    
+    screenshots:
+      process.env["SCREENSHOTS"] !== "false" &&
+      process.env["NO_SCREENSHOTS"] !== "true",
+
+    // Video configuration
+    videos:
+      process.env["VIDEOS"] !== "false" && process.env["NO_VIDEOS"] !== "true",
+
     // Trace configuration
-    traces: process.env['TRACES'] !== 'false' && process.env['NO_TRACES'] !== 'true',
-    
+    traces:
+      process.env["TRACES"] !== "false" && process.env["NO_TRACES"] !== "true",
+
     // Only generate on failure (default: true)
-    onlyOnFailure: process.env['ARTIFACTS_ON_SUCCESS'] !== 'true'
+    onlyOnFailure: process.env["ARTIFACTS_ON_SUCCESS"] !== "true",
   };
 
   // Override with specific flags
-  if (process.env['FORCE_SCREENSHOTS'] === 'true') config.screenshots = true;
-  if (process.env['FORCE_VIDEOS'] === 'true') config.videos = true;
-  if (process.env['FORCE_TRACES'] === 'true') config.traces = true;
-  
+  if (process.env["FORCE_SCREENSHOTS"] === "true") config.screenshots = true;
+  if (process.env["FORCE_VIDEOS"] === "true") config.videos = true;
+  if (process.env["FORCE_TRACES"] === "true") config.traces = true;
+
   // Disable all artifacts flag
-  if (process.env['NO_ARTIFACTS'] === 'true') {
+  if (process.env["NO_ARTIFACTS"] === "true") {
     config.screenshots = false;
     config.videos = false;
     config.traces = false;
@@ -81,10 +85,14 @@ export const ARTIFACT_ENV_DOCS = `
  * Print current artifact configuration
  */
 export function printArtifactConfig(config: TestArtifactConfig): void {
-  console.log('🎛️  Test Artifact Configuration:');
-  console.log(`   📸 Screenshots: ${config.screenshots ? '✅ Enabled' : '❌ Disabled'}`);
-  console.log(`   🎥 Videos: ${config.videos ? '✅ Enabled' : '❌ Disabled'}`);  
-  console.log(`   📊 Traces: ${config.traces ? '✅ Enabled' : '❌ Disabled'}`);
-  console.log(`   🎯 Mode: ${config.onlyOnFailure ? 'Failure Only' : 'All Tests'}`);
-  console.log('');
+  console.log("🎛️  Test Artifact Configuration:");
+  console.log(
+    `   📸 Screenshots: ${config.screenshots ? "✅ Enabled" : "❌ Disabled"}`,
+  );
+  console.log(`   🎥 Videos: ${config.videos ? "✅ Enabled" : "❌ Disabled"}`);
+  console.log(`   📊 Traces: ${config.traces ? "✅ Enabled" : "❌ Disabled"}`);
+  console.log(
+    `   🎯 Mode: ${config.onlyOnFailure ? "Failure Only" : "All Tests"}`,
+  );
+  console.log("");
 }

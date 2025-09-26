@@ -1,5 +1,5 @@
-import { Page, Locator } from '@playwright/test';
-import { BasePage } from './BasePage';
+import { Page, Locator } from "@playwright/test";
+import { BasePage } from "./BasePage";
 
 export class LoginPage extends BasePage {
   private readonly url: string;
@@ -13,15 +13,15 @@ export class LoginPage extends BasePage {
   constructor(page: Page) {
     super(page);
     // For the-internet.herokuapp.com login page
-    this.url = '/login';
-    
+    this.url = "/login";
+
     // Updated selectors for the-internet.herokuapp.com login page
-    this.usernameInput = page.locator('#username');
-    this.passwordInput = page.locator('#password');
+    this.usernameInput = page.locator("#username");
+    this.passwordInput = page.locator("#password");
     this.loginButton = page.locator('button[type="submit"].radius');
-    this.errorMessage = page.locator('#flash, .flash.error, .flash');
-    this.successMessage = page.locator('#flash, .flash.success, .flash');
-    this.pageTitle = page.locator('h1, h2, .example');
+    this.errorMessage = page.locator("#flash, .flash.error, .flash");
+    this.successMessage = page.locator("#flash, .flash.success, .flash");
+    this.pageTitle = page.locator("h1, h2, .example");
   }
 
   async navigateToLoginPage(): Promise<void> {
@@ -86,19 +86,21 @@ export class LoginPage extends BasePage {
   async clickForgotPasswordLink(): Promise<void> {
     // the-internet.herokuapp.com doesn't have forgot password functionality
     // This is a no-op for this test site
-    console.log('⚠️ Forgot password functionality not available on this test site');
+    console.log(
+      "⚠️ Forgot password functionality not available on this test site",
+    );
   }
 
   async clickSignUpLink(): Promise<void> {
     // the-internet.herokuapp.com doesn't have sign up functionality
     // This is a no-op for this test site
-    console.log('⚠️ Sign up functionality not available on this test site');
+    console.log("⚠️ Sign up functionality not available on this test site");
   }
 
   async checkRememberMe(): Promise<void> {
     // the-internet.herokuapp.com doesn't have a remember me checkbox
     // This is a no-op for this test site
-    console.log('⚠️ Remember me functionality not available on this test site');
+    console.log("⚠️ Remember me functionality not available on this test site");
   }
 
   async getPageTitleText(): Promise<string> {
@@ -113,6 +115,8 @@ export class LoginPage extends BasePage {
   }
 
   async waitForLoginRedirect(): Promise<void> {
-    await this.page.waitForURL(url => !url.toString().includes('/login'), { timeout: 10000 });
+    await this.page.waitForURL((url) => !url.toString().includes("/login"), {
+      timeout: 10000,
+    });
   }
 }

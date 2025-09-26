@@ -1,4 +1,4 @@
-const { chromium, firefox, webkit } = require('playwright');
+const { chromium: _chromium, firefox: _firefox, webkit: _webkit } = require('playwright'); // Available browsers
 
 // Configure Cucumber to work with TypeScript
 module.exports = {

@@ -1,17 +1,17 @@
-import { LoginPage } from './LoginPage';
-import { DashboardPage } from './DashboardPage';
+import { LoginPage } from "./LoginPage";
+import { DashboardPage } from "./DashboardPage";
 
 /**
  * Page Object Manager
  * Centralized access to all page objects
  */
 export class PageManager {
-  private readonly page: import('@playwright/test').Page;
-  
+  private readonly page: import("@playwright/test").Page;
+
   private _loginPage: LoginPage | undefined;
   private _dashboardPage: DashboardPage | undefined;
 
-  constructor(page: import('@playwright/test').Page) {
+  constructor(page: import("@playwright/test").Page) {
     this.page = page;
   }
 
@@ -45,6 +45,6 @@ export class PageManager {
 }
 
 // Export all page objects for direct import if needed
-export { BasePage } from './BasePage';
-export { LoginPage } from './LoginPage';
-export { DashboardPage } from './DashboardPage';
+export { BasePage } from "./BasePage";
+export { LoginPage } from "./LoginPage";
+export { DashboardPage } from "./DashboardPage";

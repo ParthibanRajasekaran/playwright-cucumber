@@ -1,4 +1,4 @@
-import { Page, Locator, expect } from '@playwright/test';
+import { Page, Locator, expect } from "@playwright/test";
 
 /**
  * Enhanced assertion utilities for Playwright tests
@@ -17,9 +17,13 @@ export class AssertionUtils {
    * @param timeout - Custom timeout (optional)
    * @param message - Custom error message (optional)
    */
-  async assertVisible(locator: Locator, timeout?: number, message?: string): Promise<void> {
+  async assertVisible(
+    locator: Locator,
+    timeout?: number,
+    message?: string,
+  ): Promise<void> {
     await expect(locator, message || `Element should be visible`).toBeVisible({
-      timeout: timeout || 30000
+      timeout: timeout || 30000,
     });
   }
 
@@ -29,9 +33,13 @@ export class AssertionUtils {
    * @param timeout - Custom timeout (optional)
    * @param message - Custom error message (optional)
    */
-  async assertHidden(locator: Locator, timeout?: number, message?: string): Promise<void> {
+  async assertHidden(
+    locator: Locator,
+    timeout?: number,
+    message?: string,
+  ): Promise<void> {
     await expect(locator, message || `Element should be hidden`).toBeHidden({
-      timeout: timeout || 30000
+      timeout: timeout || 30000,
     });
   }
 
@@ -41,8 +49,15 @@ export class AssertionUtils {
    * @param expectedText - Expected text (string or regex)
    * @param message - Custom error message (optional)
    */
-  async assertText(locator: Locator, expectedText: string | RegExp, message?: string): Promise<void> {
-    await expect(locator, message || `Text should match expected value`).toHaveText(expectedText);
+  async assertText(
+    locator: Locator,
+    expectedText: string | RegExp,
+    message?: string,
+  ): Promise<void> {
+    await expect(
+      locator,
+      message || `Text should match expected value`,
+    ).toHaveText(expectedText);
   }
 
   /**
@@ -51,8 +66,15 @@ export class AssertionUtils {
    * @param expectedText - Expected text to contain
    * @param message - Custom error message (optional)
    */
-  async assertContainsText(locator: Locator, expectedText: string, message?: string): Promise<void> {
-    await expect(locator, message || `Element should contain text: ${expectedText}`).toContainText(expectedText);
+  async assertContainsText(
+    locator: Locator,
+    expectedText: string,
+    message?: string,
+  ): Promise<void> {
+    await expect(
+      locator,
+      message || `Element should contain text: ${expectedText}`,
+    ).toContainText(expectedText);
   }
 
   /**
@@ -62,8 +84,16 @@ export class AssertionUtils {
    * @param expectedValue - Expected attribute value
    * @param message - Custom error message (optional)
    */
-  async assertAttribute(locator: Locator, attribute: string, expectedValue: string | RegExp, message?: string): Promise<void> {
-    await expect(locator, message || `Attribute ${attribute} should have expected value`).toHaveAttribute(attribute, expectedValue);
+  async assertAttribute(
+    locator: Locator,
+    attribute: string,
+    expectedValue: string | RegExp,
+    message?: string,
+  ): Promise<void> {
+    await expect(
+      locator,
+      message || `Attribute ${attribute} should have expected value`,
+    ).toHaveAttribute(attribute, expectedValue);
   }
 
   /**
@@ -72,8 +102,15 @@ export class AssertionUtils {
    * @param className - Expected class name
    * @param message - Custom error message (optional)
    */
-  async assertHasClass(locator: Locator, className: string, message?: string): Promise<void> {
-    await expect(locator, message || `Element should have class: ${className}`).toHaveClass(new RegExp(className));
+  async assertHasClass(
+    locator: Locator,
+    className: string,
+    message?: string,
+  ): Promise<void> {
+    await expect(
+      locator,
+      message || `Element should have class: ${className}`,
+    ).toHaveClass(new RegExp(className));
   }
 
   /**
@@ -82,8 +119,15 @@ export class AssertionUtils {
    * @param expectedValue - Expected input value
    * @param message - Custom error message (optional)
    */
-  async assertInputValue(locator: Locator, expectedValue: string, message?: string): Promise<void> {
-    await expect(locator, message || `Input should have expected value`).toHaveValue(expectedValue);
+  async assertInputValue(
+    locator: Locator,
+    expectedValue: string,
+    message?: string,
+  ): Promise<void> {
+    await expect(
+      locator,
+      message || `Input should have expected value`,
+    ).toHaveValue(expectedValue);
   }
 
   /**
@@ -101,7 +145,10 @@ export class AssertionUtils {
    * @param message - Custom error message (optional)
    */
   async assertDisabled(locator: Locator, message?: string): Promise<void> {
-    await expect(locator, message || `Element should be disabled`).toBeDisabled();
+    await expect(
+      locator,
+      message || `Element should be disabled`,
+    ).toBeDisabled();
   }
 
   /**
@@ -110,8 +157,15 @@ export class AssertionUtils {
    * @param expectedCount - Expected number of elements
    * @param message - Custom error message (optional)
    */
-  async assertCount(locator: Locator, expectedCount: number, message?: string): Promise<void> {
-    await expect(locator, message || `Should have ${expectedCount} elements`).toHaveCount(expectedCount);
+  async assertCount(
+    locator: Locator,
+    expectedCount: number,
+    message?: string,
+  ): Promise<void> {
+    await expect(
+      locator,
+      message || `Should have ${expectedCount} elements`,
+    ).toHaveCount(expectedCount);
   }
 
   /**
@@ -119,8 +173,14 @@ export class AssertionUtils {
    * @param expectedTitle - Expected page title (string or regex)
    * @param message - Custom error message (optional)
    */
-  async assertPageTitle(expectedTitle: string | RegExp, message?: string): Promise<void> {
-    await expect(this.page, message || `Page title should match expected value`).toHaveTitle(expectedTitle);
+  async assertPageTitle(
+    expectedTitle: string | RegExp,
+    message?: string,
+  ): Promise<void> {
+    await expect(
+      this.page,
+      message || `Page title should match expected value`,
+    ).toHaveTitle(expectedTitle);
   }
 
   /**
@@ -128,8 +188,14 @@ export class AssertionUtils {
    * @param expectedUrl - Expected URL (string or regex)
    * @param message - Custom error message (optional)
    */
-  async assertPageUrl(expectedUrl: string | RegExp, message?: string): Promise<void> {
-    await expect(this.page, message || `Page URL should match expected value`).toHaveURL(expectedUrl);
+  async assertPageUrl(
+    expectedUrl: string | RegExp,
+    message?: string,
+  ): Promise<void> {
+    await expect(
+      this.page,
+      message || `Page URL should match expected value`,
+    ).toHaveURL(expectedUrl);
   }
 
   /**
@@ -138,7 +204,10 @@ export class AssertionUtils {
    * @param message - Custom error message (optional)
    */
   async assertChecked(locator: Locator, message?: string): Promise<void> {
-    await expect(locator, message || `Checkbox should be checked`).toBeChecked();
+    await expect(
+      locator,
+      message || `Checkbox should be checked`,
+    ).toBeChecked();
   }
 
   /**
@@ -147,7 +216,10 @@ export class AssertionUtils {
    * @param message - Custom error message (optional)
    */
   async assertUnchecked(locator: Locator, message?: string): Promise<void> {
-    await expect(locator, message || `Checkbox should be unchecked`).not.toBeChecked();
+    await expect(
+      locator,
+      message || `Checkbox should be unchecked`,
+    ).not.toBeChecked();
   }
 
   /**
@@ -165,11 +237,18 @@ export class AssertionUtils {
    * @param assertion - Assertion function
    * @param message - Custom error message (optional)
    */
-  async softAssert(locator: Locator, assertion: (locator: Locator) => Promise<void>, message?: string): Promise<void> {
+  async softAssert(
+    locator: Locator,
+    assertion: (locator: Locator) => Promise<void>,
+    message?: string,
+  ): Promise<void> {
     try {
       await assertion(locator);
     } catch (error) {
-      console.warn(`Soft assertion failed: ${message || 'Unknown assertion'}`, error);
+      console.warn(
+        `Soft assertion failed: ${message || "Unknown assertion"}`,
+        error,
+      );
       // Continue test execution instead of failing
     }
   }
@@ -181,18 +260,18 @@ export class AssertionUtils {
    * @param options - Screenshot options
    */
   async assertScreenshot(
-    locator: Locator, 
-    screenshotName: string, 
-    options?: { 
-      threshold?: number; 
-      maxDiffPixels?: number; 
-      animations?: 'disabled' | 'allow';
-    }
+    locator: Locator,
+    screenshotName: string,
+    options?: {
+      threshold?: number;
+      maxDiffPixels?: number;
+      animations?: "disabled" | "allow";
+    },
   ): Promise<void> {
     await expect(locator).toHaveScreenshot(`${screenshotName}.png`, {
       threshold: options?.threshold || 0.2,
       maxDiffPixels: options?.maxDiffPixels || 100,
-      animations: options?.animations || 'disabled'
+      animations: options?.animations || "disabled",
     });
   }
 
@@ -202,19 +281,19 @@ export class AssertionUtils {
    * @param options - Screenshot options
    */
   async assertPageScreenshot(
-    screenshotName: string, 
-    options?: { 
-      threshold?: number; 
-      maxDiffPixels?: number; 
+    screenshotName: string,
+    options?: {
+      threshold?: number;
+      maxDiffPixels?: number;
       fullPage?: boolean;
-      animations?: 'disabled' | 'allow';
-    }
+      animations?: "disabled" | "allow";
+    },
   ): Promise<void> {
     await expect(this.page).toHaveScreenshot(`${screenshotName}.png`, {
       threshold: options?.threshold || 0.2,
       maxDiffPixels: options?.maxDiffPixels || 100,
       fullPage: options?.fullPage || true,
-      animations: options?.animations || 'disabled'
+      animations: options?.animations || "disabled",
     });
   }
 
@@ -224,8 +303,12 @@ export class AssertionUtils {
    * @param timeout - Wait timeout
    * @param message - Custom error message (optional)
    */
-  async waitAndAssertVisible(locator: Locator, timeout: number = 30000, message?: string): Promise<void> {
-    await locator.waitFor({ state: 'visible', timeout });
+  async waitAndAssertVisible(
+    locator: Locator,
+    timeout: number = 30000,
+    message?: string,
+  ): Promise<void> {
+    await locator.waitFor({ state: "visible", timeout });
     await this.assertVisible(locator, timeout, message);
   }
 
@@ -235,8 +318,12 @@ export class AssertionUtils {
    * @param timeout - Wait timeout
    * @param message - Custom error message (optional)
    */
-  async waitAndAssertHidden(locator: Locator, timeout: number = 30000, message?: string): Promise<void> {
-    await locator.waitFor({ state: 'hidden', timeout });
+  async waitAndAssertHidden(
+    locator: Locator,
+    timeout: number = 30000,
+    message?: string,
+  ): Promise<void> {
+    await locator.waitFor({ state: "hidden", timeout });
     await this.assertHidden(locator, timeout, message);
   }
 }
@@ -256,7 +343,7 @@ export class TestUtils {
    * @param timeout - Wait timeout
    */
   async waitForNetworkIdle(timeout: number = 30000): Promise<void> {
-    await this.page.waitForLoadState('networkidle', { timeout });
+    await this.page.waitForLoadState("networkidle", { timeout });
   }
 
   /**
@@ -275,25 +362,25 @@ export class TestUtils {
    * @param delay - Delay between retries in milliseconds
    */
   async retryAction<T>(
-    action: () => Promise<T>, 
-    maxAttempts: number = 3, 
-    delay: number = 1000
+    action: () => Promise<T>,
+    maxAttempts: number = 3,
+    delay: number = 1000,
   ): Promise<T> {
     let lastError: Error;
-    
+
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
       try {
         return await action();
       } catch (error) {
         lastError = error as Error;
         console.log(`Attempt ${attempt} failed: ${error}`);
-        
+
         if (attempt < maxAttempts) {
           await this.page.waitForTimeout(delay);
         }
       }
     }
-    
+
     throw lastError!;
   }
 
@@ -311,20 +398,20 @@ export class TestUtils {
    * @param date - Date to format
    * @param format - Date format (optional)
    */
-  formatDate(date: Date = new Date(), format: string = 'YYYY-MM-DD'): string {
+  formatDate(date: Date = new Date(), format: string = "YYYY-MM-DD"): string {
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const seconds = String(date.getSeconds()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
 
     return format
-      .replace('YYYY', year.toString())
-      .replace('MM', month)
-      .replace('DD', day)
-      .replace('HH', hours)
-      .replace('mm', minutes)
-      .replace('ss', seconds);
+      .replace("YYYY", year.toString())
+      .replace("MM", month)
+      .replace("DD", day)
+      .replace("HH", hours)
+      .replace("mm", minutes)
+      .replace("ss", seconds);
   }
 }

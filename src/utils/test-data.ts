@@ -55,107 +55,107 @@ export interface TestEnvironment {
  */
 export const testData = {
   environments: {
-    'the-internet': {
-      name: 'The Internet Test Site',
-      baseUrl: 'https://the-internet.herokuapp.com',
+    "the-internet": {
+      name: "The Internet Test Site",
+      baseUrl: "https://the-internet.herokuapp.com",
       credentials: {
         admin: {
-          username: 'tomsmith',
-          password: 'SuperSecretPassword!',
-          email: 'tomsmith@example.com',
-          role: 'user'
+          username: "tomsmith",
+          password: "SuperSecretPassword!",
+          email: "tomsmith@example.com",
+          role: "user",
         },
         user: {
-          username: 'tomsmith',
-          password: 'SuperSecretPassword!',
-          email: 'tomsmith@example.com',
-          role: 'user'
+          username: "tomsmith",
+          password: "SuperSecretPassword!",
+          email: "tomsmith@example.com",
+          role: "user",
         },
         readonly: {
-          username: 'tomsmith',
-          password: 'SuperSecretPassword!',
-          email: 'tomsmith@example.com',
-          role: 'user'
-        }
-      }
+          username: "tomsmith",
+          password: "SuperSecretPassword!",
+          email: "tomsmith@example.com",
+          role: "user",
+        },
+      },
     },
 
     demo: {
-      name: 'Demo Environment',
-      baseUrl: 'https://demo.playwright.dev',
+      name: "Demo Environment",
+      baseUrl: "https://demo.playwright.dev",
       credentials: {
         admin: {
-          username: 'admin',
-          password: 'admin123',
-          email: 'admin@example.com',
-          role: 'administrator'
+          username: "admin",
+          password: "admin123",
+          email: "admin@example.com",
+          role: "administrator",
         },
         user: {
-          username: 'user',
-          password: 'user123',
-          email: 'user@example.com',
-          role: 'user'
+          username: "user",
+          password: "user123",
+          email: "user@example.com",
+          role: "user",
         },
         readonly: {
-          username: 'readonly',
-          password: 'readonly123',
-          email: 'readonly@example.com',
-          role: 'readonly'
-        }
-      }
+          username: "readonly",
+          password: "readonly123",
+          email: "readonly@example.com",
+          role: "readonly",
+        },
+      },
     },
-    
+
     staging: {
-      name: 'Staging Environment',
-      baseUrl: 'https://staging.example.com',
-      apiUrl: 'https://api-staging.example.com',
+      name: "Staging Environment",
+      baseUrl: "https://staging.example.com",
+      apiUrl: "https://api-staging.example.com",
       credentials: {
         admin: {
-          username: 'admin@staging.com',
-          password: 'StaginG@dm1n!',
-          email: 'admin@staging.com',
-          role: 'administrator'
+          username: "admin@staging.com",
+          password: "StaginG@dm1n!",
+          email: "admin@staging.com",
+          role: "administrator",
         },
         user: {
-          username: 'testuser@staging.com',
-          password: 'TestU$er123',
-          email: 'testuser@staging.com',
-          role: 'user'
+          username: "testuser@staging.com",
+          password: "TestU$er123",
+          email: "testuser@staging.com",
+          role: "user",
         },
         readonly: {
-          username: 'readonly@staging.com',
-          password: 'ReadOnlY456',
-          email: 'readonly@staging.com',
-          role: 'readonly'
-        }
-      }
+          username: "readonly@staging.com",
+          password: "ReadOnlY456",
+          email: "readonly@staging.com",
+          role: "readonly",
+        },
+      },
     },
 
     production: {
-      name: 'Production Environment',
-      baseUrl: 'https://app.example.com',
-      apiUrl: 'https://api.example.com',
+      name: "Production Environment",
+      baseUrl: "https://app.example.com",
+      apiUrl: "https://api.example.com",
       credentials: {
         admin: {
-          username: process.env['PROD_ADMIN_USERNAME'] || '',
-          password: process.env['PROD_ADMIN_PASSWORD'] || '',
-          email: process.env['PROD_ADMIN_EMAIL'] || '',
-          role: 'administrator'
+          username: process.env["PROD_ADMIN_USERNAME"] || "",
+          password: process.env["PROD_ADMIN_PASSWORD"] || "",
+          email: process.env["PROD_ADMIN_EMAIL"] || "",
+          role: "administrator",
         },
         user: {
-          username: process.env['PROD_USER_USERNAME'] || '',
-          password: process.env['PROD_USER_PASSWORD'] || '',
-          email: process.env['PROD_USER_EMAIL'] || '',
-          role: 'user'
+          username: process.env["PROD_USER_USERNAME"] || "",
+          password: process.env["PROD_USER_PASSWORD"] || "",
+          email: process.env["PROD_USER_EMAIL"] || "",
+          role: "user",
         },
         readonly: {
-          username: process.env['PROD_READONLY_USERNAME'] || '',
-          password: process.env['PROD_READONLY_PASSWORD'] || '',
-          email: process.env['PROD_READONLY_EMAIL'] || '',
-          role: 'readonly'
-        }
-      }
-    }
+          username: process.env["PROD_READONLY_USERNAME"] || "",
+          password: process.env["PROD_READONLY_PASSWORD"] || "",
+          email: process.env["PROD_READONLY_EMAIL"] || "",
+          role: "readonly",
+        },
+      },
+    },
   },
 
   /**
@@ -163,25 +163,25 @@ export const testData = {
    */
   invalidCredentials: {
     empty: {
-      username: '',
-      password: ''
+      username: "",
+      password: "",
     },
     invalidUsername: {
-      username: 'invalid@user.com',
-      password: 'validPassword123'
+      username: "invalid@user.com",
+      password: "validPassword123",
     },
     invalidPassword: {
-      username: 'valid@user.com',
-      password: 'wrongpassword'
+      username: "valid@user.com",
+      password: "wrongpassword",
     },
     malformed: {
-      username: 'not-an-email',
-      password: '123'
+      username: "not-an-email",
+      password: "123",
     },
     specialCharacters: {
-      username: 'user@domain.com',
-      password: 'Pass!@#$%^&*()'
-    }
+      username: "user@domain.com",
+      password: "Pass!@#$%^&*()",
+    },
   },
 
   /**
@@ -189,20 +189,20 @@ export const testData = {
    */
   forms: {
     registration: {
-      firstName: 'John',
-      lastName: 'Doe',
-      email: 'john.doe@example.com',
-      phone: '+1-555-123-4567',
-      company: 'Acme Corp',
-      jobTitle: 'Software Engineer'
+      firstName: "John",
+      lastName: "Doe",
+      email: "john.doe@example.com",
+      phone: "+1-555-123-4567",
+      company: "Acme Corp",
+      jobTitle: "Software Engineer",
     },
-    
+
     profile: {
-      bio: 'Experienced software engineer with expertise in test automation.',
-      website: 'https://johndoe.dev',
-      linkedIn: 'https://linkedin.com/in/johndoe',
-      github: 'https://github.com/johndoe'
-    }
+      bio: "Experienced software engineer with expertise in test automation.",
+      website: "https://johndoe.dev",
+      linkedIn: "https://linkedin.com/in/johndoe",
+      github: "https://github.com/johndoe",
+    },
   },
 
   /**
@@ -210,34 +210,34 @@ export const testData = {
    */
   messages: {
     login: {
-      success: 'Welcome back!',
-      invalidCredentials: 'Invalid username or password',
-      emptyFields: 'Please fill in all required fields',
-      accountLocked: 'Account has been locked due to multiple failed attempts'
+      success: "Welcome back!",
+      invalidCredentials: "Invalid username or password",
+      emptyFields: "Please fill in all required fields",
+      accountLocked: "Account has been locked due to multiple failed attempts",
     },
-    
+
     dashboard: {
-      welcome: 'Dashboard',
-      noData: 'No data available',
-      loading: 'Loading...'
+      welcome: "Dashboard",
+      noData: "No data available",
+      loading: "Loading...",
     },
-    
+
     errors: {
-      network: 'Network error occurred',
-      server: 'Internal server error',
-      notFound: 'Page not found',
-      unauthorized: 'Unauthorized access'
-    }
+      network: "Network error occurred",
+      server: "Internal server error",
+      notFound: "Page not found",
+      unauthorized: "Unauthorized access",
+    },
   },
 
   /**
    * Timeouts for different operations
    */
   timeouts: {
-    short: 5000,      // 5 seconds
-    medium: 15000,    // 15 seconds
-    long: 30000,      // 30 seconds
-    extended: 60000   // 1 minute
+    short: 5000, // 5 seconds
+    medium: 15000, // 15 seconds
+    long: 30000, // 30 seconds
+    extended: 60000, // 1 minute
   },
 
   /**
@@ -245,23 +245,26 @@ export const testData = {
    */
   files: {
     sample: {
-      pdf: 'test-data/sample.pdf',
-      image: 'test-data/sample.jpg',
-      csv: 'test-data/sample.csv',
-      txt: 'test-data/sample.txt'
+      pdf: "test-data/sample.pdf",
+      image: "test-data/sample.jpg",
+      csv: "test-data/sample.csv",
+      txt: "test-data/sample.txt",
     },
-    
-    downloads: 'test-results/downloads/',
-    uploads: 'test-data/uploads/'
-  }
+
+    downloads: "test-results/downloads/",
+    uploads: "test-data/uploads/",
+  },
 };
 
 /**
  * Get environment configuration based on environment name
  * @param envName - Environment name (the-internet, demo, staging, production)
  */
-export function getEnvironment(envName: string = 'the-internet'): TestEnvironment {
-  const env = testData.environments[envName as keyof typeof testData.environments];
+export function getEnvironment(
+  envName: string = "the-internet",
+): TestEnvironment {
+  const env =
+    testData.environments[envName as keyof typeof testData.environments];
   if (!env) {
     throw new Error(`Environment '${envName}' not found`);
   }
@@ -273,13 +276,21 @@ export function getEnvironment(envName: string = 'the-internet'): TestEnvironmen
  * @param role - User role (admin, user, readonly) or environment name for backward compatibility
  * @param envName - Environment name (defaults to 'the-internet')
  */
-export function getCredentials(role: string = 'user', envName: string = 'the-internet'): UserCredentials {
+export function getCredentials(
+  role: string = "user",
+  envName: string = "the-internet",
+): UserCredentials {
   // Handle backward compatibility - if role looks like an environment name, swap parameters
-  if (role === 'valid' || role === 'invalid' || role === 'demo' || role === 'staging') {
-    envName = role === 'valid' ? 'the-internet' : role;
-    role = 'user';
+  if (
+    role === "valid" ||
+    role === "invalid" ||
+    role === "demo" ||
+    role === "staging"
+  ) {
+    envName = role === "valid" ? "the-internet" : role;
+    role = "user";
   }
-  
+
   const env = getEnvironment(envName);
   const credentials = env.credentials[role as keyof typeof env.credentials];
   if (!credentials) {
@@ -295,19 +306,23 @@ export const generateTestData = {
   email: (): string => `test${Date.now()}@example.com`,
   username: (): string => `user${Date.now()}`,
   password: (): string => `Pass${Date.now()}!`,
-  phoneNumber: (): string => `+1-555-${Math.floor(Math.random() * 9000) + 1000}-${Math.floor(Math.random() * 9000) + 1000}`,
+  phoneNumber: (): string =>
+    `+1-555-${Math.floor(Math.random() * 9000) + 1000}-${Math.floor(Math.random() * 9000) + 1000}`,
   companyName: (): string => `Company ${Date.now()}`,
-  
+
   /**
    * Generate a random string of specified length
    * @param length - Desired string length
    * @param charset - Character set to use
    */
-  randomString: (length: number = 10, charset: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'): string => {
-    let result = '';
+  randomString: (
+    length: number = 10,
+    charset: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
+  ): string => {
+    let result = "";
     for (let i = 0; i < length; i++) {
       result += charset.charAt(Math.floor(Math.random() * charset.length));
     }
     return result;
-  }
+  },
 };

@@ -404,8 +404,8 @@ async function main() {
     // Ensure directories exist
     ensureDirectories();
     
-    // Link media files
-    const mediaFiles = linkMediaFiles();
+    // Link media files (for future use)
+    const _mediaFiles = linkMediaFiles(); // Reserved for media attachments
     
     // Generate Cucumber HTML report
     console.log('📝 Generating Cucumber HTML report...');

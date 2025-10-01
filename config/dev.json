@@ -1,0 +1,70 @@
+{
+  "name": "development",
+  "application": {
+    "baseURL": "https://the-internet.herokuapp.com",
+    "loginURL": "https://the-internet.herokuapp.com/login",
+    "apiBaseURL": "https://dev-api.example.com",
+    "timeout": {
+      "default": 30000,
+      "navigation": 30000,
+      "action": 15000
+    }
+  },
+  "database": {
+    "host": "dev-db.example.com",
+    "port": 5432,
+    "name": "testdb_dev",
+    "ssl": false
+  },
+  "api": {
+    "endpoints": {
+      "users": "/api/v1/users",
+      "auth": "/api/v1/auth",
+      "products": "/api/v1/products"
+    },
+    "headers": {
+      "Content-Type": "application/json",
+      "X-API-Version": "v1"
+    },
+    "timeout": 10000
+  },
+  "testData": {
+    "directory": "test-data/dev",
+    "users": {
+      "valid": {
+        "username": "tomsmith",
+        "password": "SuperSecretPassword!"
+      },
+      "invalid": {
+        "username": "invaliduser",
+        "password": "wrongpassword"
+      },
+      "admin": {
+        "username": "admin",
+        "password": "admin123"
+      }
+    }
+  },
+  "features": {
+    "enableVideoRecording": true,
+    "enableTracing": true,
+    "enableScreenshots": true,
+    "enableAccessibilityTesting": true,
+    "enablePerformanceTesting": false
+  },
+  "browser": {
+    "headless": false,
+    "slowMo": 100,
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "locale": "en-US",
+    "timezone": "America/New_York"
+  },
+  "reporting": {
+    "outputDir": "reports",
+    "formats": ["html", "json"],
+    "includePassedTests": true
+  }
+}

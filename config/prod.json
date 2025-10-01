@@ -1,0 +1,72 @@
+{
+  "name": "production",
+  "application": {
+    "baseURL": "https://production.example.com",
+    "loginURL": "https://production.example.com/login",
+    "apiBaseURL": "https://api.example.com",
+    "timeout": {
+      "default": 60000,
+      "navigation": 60000,
+      "action": 30000
+    }
+  },
+  "database": {
+    "host": "prod-db.example.com",
+    "port": 5432,
+    "name": "testdb_prod",
+    "ssl": true
+  },
+  "api": {
+    "endpoints": {
+      "users": "/api/v1/users",
+      "auth": "/api/v1/auth",
+      "products": "/api/v1/products",
+      "orders": "/api/v1/orders",
+      "analytics": "/api/v1/analytics"
+    },
+    "headers": {
+      "Content-Type": "application/json",
+      "X-API-Version": "v1"
+    },
+    "timeout": 20000
+  },
+  "testData": {
+    "directory": "test-data/prod",
+    "users": {
+      "valid": {
+        "username": "prod.testuser@example.com",
+        "password": "ProductionTestPass123!"
+      },
+      "invalid": {
+        "username": "invalid.user@example.com",
+        "password": "wrongpassword"
+      },
+      "admin": {
+        "username": "prod.admin@example.com",
+        "password": "ProductionAdmin123!"
+      }
+    }
+  },
+  "features": {
+    "enableVideoRecording": false,
+    "enableTracing": true,
+    "enableScreenshots": true,
+    "enableAccessibilityTesting": false,
+    "enablePerformanceTesting": true
+  },
+  "browser": {
+    "headless": true,
+    "slowMo": 0,
+    "viewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "locale": "en-US",
+    "timezone": "America/New_York"
+  },
+  "reporting": {
+    "outputDir": "reports",
+    "formats": ["html", "json", "junit"],
+    "includePassedTests": false
+  }
+}

@@ -13,6 +13,10 @@ import {
   printArtifactConfig,
   TestArtifactConfig,
 } from "../config/artifacts";
+import {
+  EnvironmentManager,
+  EnvironmentConfig,
+} from "../config/environment";
 
 /**
  * Custom World class for Cucumber tests with Playwright integration
@@ -43,11 +47,24 @@ export class CustomWorld extends World {
     trace: boolean;
   };
 
+  // Environment configuration
+  public environmentConfig: EnvironmentConfig;
+  public environmentManager: EnvironmentManager;
+
   // Artifact configuration
   public artifactConfig: TestArtifactConfig;
 
   constructor(options: IWorldOptions) {
     super(options);
+
+    // Initialize environment configuration
+    this.environmentManager = EnvironmentManager.getInstance();
+    this.environmentConfig = this.environmentManager.getConfig();
+
+    // Print environment configuration summary
+    if (process.env["SHOW_ENV_CONFIG"] !== "false") {
+      this.environmentManager.printConfigSummary();
+    }
 
     // Get artifact configuration from environment variables
     this.artifactConfig = getTestArtifactConfig();
@@ -57,15 +74,19 @@ export class CustomWorld extends World {
       printArtifactConfig(this.artifactConfig);
     }
 
-    // Initialize configuration from world parameters
+    // Initialize configuration from environment and world parameters
     this.config = {
-      browser: options.parameters?.browser || "chromium",
-      headless: options.parameters?.headless !== false,
-      slowMo: options.parameters?.slowMo || 0,
-      baseURL: options.parameters?.baseURL || "https://demo.playwright.dev",
-      viewport: options.parameters?.viewport || { width: 1280, height: 720 },
-      video: this.artifactConfig.videos && options.parameters?.video !== false, // Respect artifact config
-      trace: this.artifactConfig.traces && options.parameters?.trace !== false, // Respect artifact config
+      browser: options.parameters?.browser || this.environmentConfig.browser?.headless ? "chromium" : "chromium",
+      headless: options.parameters?.headless !== undefined ? options.parameters.headless : this.environmentConfig.browser.headless,
+      slowMo: options.parameters?.slowMo || this.environmentConfig.browser.slowMo,
+      baseURL: this.environmentManager.getBaseURL(),
+      viewport: options.parameters?.viewport || this.environmentConfig.browser.viewport,
+      video: this.artifactConfig.videos && 
+             this.environmentConfig.features.enableVideoRecording && 
+             options.parameters?.video !== false,
+      trace: this.artifactConfig.traces && 
+             this.environmentConfig.features.enableTracing && 
+             options.parameters?.trace !== false,
     };
   }
 
@@ -444,6 +465,44 @@ export class CustomWorld extends World {
       throw new Error("Page not initialized. Call init() first.");
     }
     await this.page.waitForLoadState("networkidle");
+  }
+
+  /**
+   * Get current environment name
+   */
+  getEnvironment(): string {
+    return this.environmentManager.getEnvironment();
+  }
+
+  /**
+   * Get environment-specific credentials
+   */
+  getEnvironmentCredentials(type: "valid" | "invalid" | "admin"): {
+    username: string;
+    password: string;
+  } {
+    return this.environmentManager.getCredentials(type);
+  }
+
+  /**
+   * Check if a feature is enabled in current environment
+   */
+  isFeatureEnabled(feature: keyof EnvironmentConfig["features"]): boolean {
+    return this.environmentManager.isFeatureEnabled(feature);
+  }
+
+  /**
+   * Get API endpoint URL for current environment
+   */
+  getAPIEndpoint(name: string): string {
+    return this.environmentManager.getAPIEndpoint(name);
+  }
+
+  /**
+   * Get test data file path for current environment
+   */
+  getTestDataPath(filename: string): string {
+    return this.environmentManager.getTestDataPath(filename);
   }
 }
 

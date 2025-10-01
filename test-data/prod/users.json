@@ -1,0 +1,31 @@
+{
+  "valid": {
+    "username": "prod.testuser@example.com",
+    "password": "ProductionTestPass123!",
+    "email": "prod.testuser@example.com",
+    "firstName": "Production",
+    "lastName": "TestUser",
+    "role": "user"
+  },
+  "invalid": {
+    "username": "invalid.user@example.com",
+    "password": "wrongpassword",
+    "email": "invalid.user@example.com"
+  },
+  "admin": {
+    "username": "prod.admin@example.com",
+    "password": "ProductionAdmin123!",
+    "email": "prod.admin@example.com",
+    "firstName": "Production",
+    "lastName": "Admin",
+    "role": "admin"
+  },
+  "testUsers": [
+    {
+      "username": "prod.readonly@example.com",
+      "password": "ProdReadOnly123!",
+      "email": "prod.readonly@example.com",
+      "role": "readonly"
+    }
+  ]
+}

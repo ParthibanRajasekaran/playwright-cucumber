@@ -198,6 +198,7 @@ npm run ci:security           # Run security audit
 
 ### 🌍 Environment Variables
 
+
 Create a `.env` file based on `.env.example`:
 
 ```env
@@ -228,14 +229,267 @@ RECORD_VIDEO=true
 
 # CI/CD Configuration
 CI=false
-DEBUG=false
-CLEANUP_TEMP=true
-ARCHIVE_ARTIFACTS=false
+```
 
-# MCP Integration (Future)
-ENABLE_MCP=false
-MCP_SERVER_URL=http://localhost:3000
-MCP_CONFIG=mcp-config.json
+## 🌍 Environment-Specific Configuration
+
+This framework supports comprehensive environment-specific configuration for different testing environments (dev, staging, production).
+
+### Environment Structure
+
+```
+config/
+├── dev.json          # Development environment settings
+├── staging.json      # Staging environment settings
+└── prod.json         # Production environment settings
+
+test-data/
+├── dev/              # Development test data
+│   └── users.json
+├── staging/          # Staging test data
+│   └── users.json
+└── prod/             # Production test data
+    └── users.json
+```
+
+### Environment Configuration Files
+
+Each environment config file (`config/{env}.json`) contains:
+
+```json
+{
+  "name": "development",
+  "application": {
+    "baseURL": "https://dev.example.com",
+    "loginURL": "https://dev.example.com/login",
+    "apiBaseURL": "https://dev-api.example.com",
+    "timeout": {
+      "default": 30000,
+      "navigation": 30000,
+      "action": 15000
+    }
+  },
+  "testData": {
+    "directory": "test-data/dev",
+    "users": {
+      "valid": {
+        "username": "testuser@dev.com",
+        "password": "DevPassword123!"
+      },
+      "invalid": {
+        "username": "invalid@dev.com",
+        "password": "wrongpassword"
+      },
+      "admin": {
+        "username": "admin@dev.com",
+        "password": "AdminPass123!"
+      }
+    }
+  },
+  "features": {
+    "enableVideoRecording": true,
+    "enableTracing": true,
+    "enableScreenshots": true,
+    "enableAccessibilityTesting": true,
+    "enablePerformanceTesting": false
+  },
+  "browser": {
+    "headless": false,
+    "slowMo": 100,
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    }
+  }
+}
+```
+
+### Environment Selection
+
+Set the environment using the `TEST_ENV` environment variable:
+
+```bash
+# Development environment (default)
+TEST_ENV=dev npm run test
+
+# Staging environment
+TEST_ENV=staging npm run test
+
+# Production environment
+TEST_ENV=prod npm run test
+```
+
+### Environment-Specific Scripts
+
+Use the predefined npm scripts for different environments:
+
+```bash
+# Development testing
+npm run test:dev
+npm run test:dev:smoke
+npm run test:dev:headed
+
+# Staging testing
+npm run test:staging
+npm run test:staging:smoke
+npm run test:staging:headed
+
+# Production testing
+npm run test:prod
+npm run test:prod:smoke
+
+# View current environment configuration
+npm run env:config
+```
+
+### Environment Variable Overrides
+
+Override any configuration setting using environment variables:
+
+```bash
+# Override base URL
+BASE_URL=https://custom.example.com npm run test:dev
+
+# Override credentials
+VALID_USERNAME=custom@user.com VALID_PASSWORD=custompass npm run test
+
+# Override browser settings
+HEADLESS=false SLOW_MO=500 npm run test:staging
+
+# Override feature flags
+ENABLE_VIDEO=false ENABLE_TRACING=true npm run test:prod
+
+# Override timeouts
+DEFAULT_TIMEOUT=45000 NAVIGATION_TIMEOUT=60000 npm run test
+```
+
+### Using Environment Configuration in Tests
+
+```typescript
+// In step definitions
+import { EnvironmentManager } from '../src/config/environment';
+
+// Get environment manager instance
+const envManager = EnvironmentManager.getInstance();
+
+// Get current environment name
+const env = envManager.getEnvironment(); // 'dev', 'staging', 'prod'
+
+// Get environment-specific credentials
+const credentials = envManager.getCredentials('valid');
+console.log(credentials.username, credentials.password);
+
+// Get environment-specific base URL
+const baseURL = envManager.getBaseURL();
+
+// Check if feature is enabled
+if (envManager.isFeatureEnabled('enablePerformanceTesting')) {
+  // Run performance tests
+}
+
+// Get API endpoint
+const usersAPI = envManager.getAPIEndpoint('users');
+
+// Load environment-specific test data
+const testDataPath = envManager.getTestDataPath('users.json');
+```
+
+### Using in CustomWorld
+
+The `CustomWorld` class provides convenient access to environment configuration:
+
+```typescript
+// In step definitions
+Given('I am on the login page', async function (this: CustomWorld) {
+  // Get environment-specific base URL
+  await this.navigateTo('/login');
+  
+  // Get environment-specific credentials
+  const credentials = this.getEnvironmentCredentials('valid');
+  
+  // Check environment-specific features
+  if (this.isFeatureEnabled('enableAccessibilityTesting')) {
+    // Perform accessibility checks
+  }
+  
+  // Get current environment
+  console.log(`Running on: ${this.getEnvironment()}`);
+});
+```
+
+### Environment-Specific Test Data
+
+Create test data files for each environment:
+
+```json
+// test-data/dev/users.json
+{
+  "valid": {
+    "username": "dev.user@example.com",
+    "password": "DevPassword123!",
+    "firstName": "Dev",
+    "lastName": "User"
+  },
+  "testUsers": [
+    {
+      "username": "dev.test1@example.com",
+      "password": "DevTest123!",
+      "role": "user"
+    }
+  ]
+}
+```
+
+Access test data in your tests:
+
+```typescript
+import { TestDataManager } from '../src/utils/test-data';
+
+// Get test data manager
+const testDataManager = TestDataManager.getInstance();
+
+// Load environment-specific user data
+const userData = testDataManager.getUserData();
+
+// Get test users for current environment
+const testUsers = testDataManager.getTestUsers();
+
+// Load custom test data file
+const customData = testDataManager.loadTestData('products.json');
+```
+
+### Best Practices
+
+1. **Environment Separation**: Keep sensitive production credentials in environment variables, not in config files
+2. **Feature Flags**: Use feature flags to enable/disable functionality per environment
+3. **Timeouts**: Adjust timeouts based on environment performance characteristics
+4. **Test Data**: Maintain separate test data sets for each environment
+5. **Video/Tracing**: Enable full recording in dev, minimal in production
+6. **Parallel Execution**: Adjust parallelism based on environment capacity
+
+### Example Environment Setup
+
+```bash
+# Development - Full debugging enabled
+TEST_ENV=dev \
+HEADED=true \
+SLOW_MO=200 \
+ENABLE_VIDEO=true \
+ENABLE_TRACING=true \
+npm run test:smoke
+
+# Staging - Production-like testing
+TEST_ENV=staging \
+HEADLESS=true \
+ENABLE_PERFORMANCE_TESTING=true \
+npm run test:regression
+
+# Production - Minimal footprint
+TEST_ENV=prod \
+HEADLESS=true \
+ENABLE_VIDEO=false \
+DEFAULT_TIMEOUT=60000 \
+npm run test:smoke
 ```
 
 ### 🎭 Playwright Configuration

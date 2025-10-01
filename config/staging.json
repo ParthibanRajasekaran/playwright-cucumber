@@ -1,0 +1,72 @@
+{
+  "name": "staging",
+  "application": {
+    "baseURL": "https://staging.example.com",
+    "loginURL": "https://staging.example.com/login",
+    "apiBaseURL": "https://staging-api.example.com",
+    "timeout": {
+      "default": 45000,
+      "navigation": 45000,
+      "action": 20000
+    }
+  },
+  "database": {
+    "host": "staging-db.example.com",
+    "port": 5432,
+    "name": "testdb_staging",
+    "ssl": true
+  },
+  "api": {
+    "endpoints": {
+      "users": "/api/v1/users",
+      "auth": "/api/v1/auth",
+      "products": "/api/v1/products",
+      "orders": "/api/v1/orders"
+    },
+    "headers": {
+      "Content-Type": "application/json",
+      "X-API-Version": "v1",
+      "Authorization": "Bearer staging-token"
+    },
+    "timeout": 15000
+  },
+  "testData": {
+    "directory": "test-data/staging",
+    "users": {
+      "valid": {
+        "username": "staging.user@example.com",
+        "password": "StagingPass123!"
+      },
+      "invalid": {
+        "username": "invalid.user@example.com",
+        "password": "wrongpassword"
+      },
+      "admin": {
+        "username": "staging.admin@example.com",
+        "password": "StagingAdmin123!"
+      }
+    }
+  },
+  "features": {
+    "enableVideoRecording": true,
+    "enableTracing": true,
+    "enableScreenshots": true,
+    "enableAccessibilityTesting": true,
+    "enablePerformanceTesting": true
+  },
+  "browser": {
+    "headless": true,
+    "slowMo": 50,
+    "viewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "locale": "en-US",
+    "timezone": "America/New_York"
+  },
+  "reporting": {
+    "outputDir": "reports",
+    "formats": ["html", "json", "junit"],
+    "includePassedTests": false
+  }
+}

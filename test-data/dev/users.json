@@ -1,0 +1,37 @@
+{
+  "valid": {
+    "username": "tomsmith",
+    "password": "SuperSecretPassword!",
+    "email": "tomsmith@dev.example.com",
+    "firstName": "Tom",
+    "lastName": "Smith",
+    "role": "user"
+  },
+  "invalid": {
+    "username": "invaliduser",
+    "password": "wrongpassword",
+    "email": "invalid@dev.example.com"
+  },
+  "admin": {
+    "username": "admin",
+    "password": "admin123",
+    "email": "admin@dev.example.com",
+    "firstName": "Admin",
+    "lastName": "User",
+    "role": "admin"
+  },
+  "testUsers": [
+    {
+      "username": "user1",
+      "password": "password1",
+      "email": "user1@dev.example.com",
+      "role": "user"
+    },
+    {
+      "username": "user2",
+      "password": "password2",
+      "email": "user2@dev.example.com",
+      "role": "user"
+    }
+  ]
+}

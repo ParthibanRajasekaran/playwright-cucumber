@@ -1,0 +1,37 @@
+{
+  "valid": {
+    "username": "staging.user@example.com",
+    "password": "StagingPass123!",
+    "email": "staging.user@example.com",
+    "firstName": "Staging",
+    "lastName": "User",
+    "role": "user"
+  },
+  "invalid": {
+    "username": "invalid.user@example.com",
+    "password": "wrongpassword",
+    "email": "invalid.user@example.com"
+  },
+  "admin": {
+    "username": "staging.admin@example.com",
+    "password": "StagingAdmin123!",
+    "email": "staging.admin@example.com",
+    "firstName": "Staging",
+    "lastName": "Admin",
+    "role": "admin"
+  },
+  "testUsers": [
+    {
+      "username": "staging.test1@example.com",
+      "password": "StagingTest123!",
+      "email": "staging.test1@example.com",
+      "role": "user"
+    },
+    {
+      "username": "staging.test2@example.com",
+      "password": "StagingTest123!",
+      "email": "staging.test2@example.com",
+      "role": "premium"
+    }
+  ]
+}
